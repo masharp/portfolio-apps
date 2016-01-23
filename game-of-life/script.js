@@ -15,11 +15,17 @@
 
 "use strict";
 
-//React Bootstrap components
+
+/*
+---- REACT BOOTSTRAP COMPONENTS -----
+*/
 const ButtonToolbar = ReactBootstrap.ButtonToolbar;
 const Button = ReactBootstrap.Button;
 
-//script globals
+
+/*
+---- SCRIPT GLOBALS -----
+*/
 var generations = 0;
 var boardHeight = 50;
 var generateTimer;
@@ -27,6 +33,10 @@ var generateTimer;
 const BOARD_HEIGHT = 50;
 const BOARD_WIDTH = 70;
 
+
+/*
+---- CUSTOM REACT COMPONENTS -----
+*/
 const Game = React.createClass({ displayName: "Game",
   propTypes: {
     boardWidth: React.PropTypes.number.isRequired,
@@ -41,7 +51,11 @@ const Game = React.createClass({ displayName: "Game",
     this.initiateBoard(200);
   },
 
-  //generates the tiles and gives them a class based on the initial randomized board
+
+  /*
+  ---- GENERATE BOARD FUNCTION -----
+      - generates the tiles and gives them a class based on the initial randomized board
+  */
   generateBoard: function generateBoard(boardState) {
     let generatedBoard = [];
     let tileKey = 0;
@@ -69,8 +83,13 @@ const Game = React.createClass({ displayName: "Game",
     this.setState({ board: generatedBoard });
   },
 
-  /* Generate an initial board at random when the page loads. Size of the random
-    sample controlled by the passed variable */
+
+  /*
+  ---- INITIATE BOARD FUNCTION-----
+      - Generate an initial board at random when the page loads. Size of the random
+        sample controlled by the passed variable. Also used to clear the board by generating
+        an empty sample size. Then calls the rendering of the board.
+  */
   initiateBoard: function initiateBoard(sampleSize) {
     let boardState = [];
 
@@ -80,7 +99,11 @@ const Game = React.createClass({ displayName: "Game",
     this.generateBoard(boardState);
   },
 
-  /* starts the board setting the global interval variable */
+
+  /*
+  ---- START FUNCTION -----
+      starts the board setting the global interval variable
+  */
   start: function start() {
     let self = this;
     generateTimer = setInterval(function runBoard() {
@@ -89,33 +112,50 @@ const Game = React.createClass({ displayName: "Game",
     }, 750);
   },
 
-  //pauses the board by clearing the global interval variable
+  /*
+  ---- STOP FUNCTION -----
+      pauses the board by clearing the global interval variable
+  */
   stop: function stop() {
     clearInterval(generateTimer);
   },
 
-  //resets the board
+
+  /*
+  ---- CLEAR FUNCTION -----
+      -resets the board by generating a blank sample array
+  */
   clear: function clear() {
     this.initiateBoard(0);
   },
 
-  //allows the user to turn a tile on
+
+  /*
+  --- CHANGE TILE FUNCTION -----
+      - allows the user to turn the tile on
+  */
   changeTile: function changeTile(event) {
     let target = $("#" + event.target.id);
-    console.log(target);
     target.removeClass("tile alive dead old");
     target.addClass("tile alive");
   },
 
-  //uses a global variable to track the generations and then a react.state to update dom
+
+  /*
+  ---- HANDLE TIME FUNCTION -----
+      uses a global variable to track the generations and then a react.state to update dom
+  */
   handleTime: function handleTime() {
     generations++;
     this.setState({ time: generations });
   },
 
-  /* checks the board start and runs it through Conway's algorithm to determine
-    all tiles' state and then generates the board based on that state
-    TODO: run the algo, update boardstate */
+  /*
+  ---- CHECK BOARD FUNCTION -----
+    - checks the board start and runs it through Conway's algorithm to determine
+      all tiles' state and then generates the board based on that state
+      TODO: run the algo, update boardstate
+  */
   checkBoard: function checkBoard() {
     let tiles = this.state.board;
     let self = this;
@@ -128,23 +168,121 @@ const Game = React.createClass({ displayName: "Game",
       //figure out which function we should send our tile to in order to find neighbours
       let tileNeighbours =
           (tileY === 0 || tileY === self.props.boardHeight - 1 || tileX === 0 || tileX === self.props.boardWidth) ?
-          self.findCornerNeighbours(tileID, tileY, tileX) : self.findNeighbours(tileID, tileY, tileX);
+          self.findEdgeNeighbours(tiles, tileID, tileY, tileX) : self.findNeighbours(tiles, tileID, tileY, tileX);
+
+      tileNeighbours.forEach(function checkNeighbourStatus(tile) {
+
+        //$("#" + tile)
+      });
 
     });
   },
 
-  //Return the 4 neighbours of this tile
-  findNeighbours: function findNeighbours(tileID, tileY, tileX) {
+
+  /*
+  ---- FIND NEIGHBOURS FUNCTION -----
+      - a function to find the 8 neighbours of a 'normally' placed tile
+  */
+  findNeighbours: function findNeighbours(tiles, tileID, tileY, tileX) {
     let neighbours = [];
+
+    //capture the horizontal neighbours
+    neighbours.push(tileY + "-" + (tileX + 1));
+    neighbours.push(tileY + "-" + (tileX - 1));
+
+    //capture the 3 neighbours above and below;
+    for(let i = tileX + 1; i > tileX - 2; i--) {
+      let neighbourAbove = (tileY - 1) + "-" + i;
+      let neighbourBelow = (tileY + 1) + "-" + i;
+      neighbours.push(neighbourAbove);
+      neighbours.push(neighbourBelow);
+    }
 
     return neighbours;
   },
 
-  //Return 4 neighbours of grid edge cases - wrap around the grid ()[50, 0] left neighbour = [50, 70])
-  findCornerNeighbours: function findCornerNeighbours(tileID, tileY, tileX) {
-    let neighbours = [];
 
-    return neighbours;
+  /*
+  ---- FIND EDGE NEIGHBOURS FUNCTION -----
+      - return 8 neighbours of grid edge cases - wrap around the grid ()[50, 0] left neighbour = [50, 70])
+  */
+  findEdgeNeighbours: function findEdgeNeighbours(tiles, tileID, tileY, tileX) {
+    let neighbours = [];
+    let self = this;
+
+    //check for top left corner case
+    if (tileY === 0 && tileX === 0) {
+
+    }
+    //check for top right corner case
+    else if (tileY === (boardHeight - 1) && tileX === (boardWidth - 1)) {
+
+    }
+    //check for bottom left corner case
+    else if (tileY === (boardHeight - 1) && tileX === 0) {
+
+    }
+    //check for bottom right corner case
+    else if (tileY === (boardHeight - 1) && tileX === (boardWidth - 1)){
+
+    }
+    //check for top row case
+    else if (tileY === 0) {
+      //get horizontal neighbours
+      neighbours.push(tileY + "-" + (tileX + 1));
+      neighbours.push(tileY + "-" + (tileX - 1));
+
+      //capture the 3 neighbours wrapped above and below;
+      for(let i = tileX + 1; i > tileX - 2; i--) {
+        let neighbourAbove = (boardHeight - 1) + "-" + i;
+        let neighbourBelow = (tileY + 1) + "-" + i;
+        neighbours.push(neighbourAbove);
+        neighbours.push(neighbourBelow);
+      }
+
+      return neighbours;
+    }
+    //check for bottom row case
+    else if (tileY === (boardHeight - 1)) {
+      //get horizontal neighbours
+      neighbours.push(tileY + "-" + (tileX + 1));
+      neighbours.push(tileY + "-" + (tileX - 1));
+
+      //capture the 3 neighbours wrapped below and above;
+      for(let i = tileX + 1; i > tileX - 2; i--) {
+        let neighbourAbove = (tileY - 1) + "-" + i;
+        let neighbourBelow = 0 + "-" + i;
+        neighbours.push(neighbourAbove);
+        neighbours.push(neighbourBelow);
+      }
+
+      return neighbours;
+    }
+    //check for left column case
+    else if (tileX === 0) {
+      //tileX = boardWidth - 1
+
+      //get horizontal neighbours
+      neighbours.push(tileY + "-" + (tileX + 1));
+      neighbours.push(tileY + "-" + (boardWidth - 1));
+
+      //capure the 3 neighbours above and below
+
+    }
+    //check for right column case
+    else if (tile === (boardWidth - 1)) {
+      //tileX = 0;
+
+      //get horizontal neighbours
+      neighbours.push(tileY + "-" + 0);
+      neighbours.push(tileY + "-" + (tileX - 1));
+
+      //capure the 3 neighbours above and below
+    }
+    else {
+      console.log("Corner Case Error");
+      return [];
+    }
   },
 
   render: function render() {
