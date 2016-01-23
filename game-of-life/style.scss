@@ -17,6 +17,27 @@
           cursor: default;
         }
       }
+      #start-btn {
+        background-color: lighten(green, 10);
+        color: white;
+        &:hover {
+          background-color: lighten(lighten(green, 10), 10);
+        }
+      }
+      #stop-btn {
+        background-color: lighten(red, 10);
+        color: white;
+        &:hover {
+          background-color: lighten(lighten(red, 10), 10);
+        }
+      }
+      #clear-btn {
+        background-color: lighten(gray, 10);
+        color: white;
+        &:hover {
+          background-color: lighten(lighten(gray, 10), 10);
+        }
+      }
     }
     #board {
       margin-top: 10px;
@@ -40,10 +61,10 @@
          background-color: black;
        }
        .alive {
-         background-color: lighten(gray, 20);
+         background-color: lighten(green, 20);
        }
        .sick {
-         background-color: darken(gray, 10);
+         background-color: gray;
        }
     }
   }
