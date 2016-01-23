@@ -1,0 +1,27 @@
+body {
+  background-color: #9a9a9a; }
+
+#top {
+  background-color: #9a009a;
+  color: white;
+  width: 100%; }
+  #top h1 {
+    text-align: center; }
+
+#content #recipe-list {
+  margin: 15px;
+  margin-top: 25px;
+  margin-left: 200px;
+  width: 50%; }
+#content button {
+  margin-left: 200px; }
+
+.footer {
+  text-align: center;
+  padding-top: 250px;
+  color: white; }
+  .footer a {
+    color: #9a009a;
+    text-decoration: none; }
+
+/*# sourceMappingURL=style.css.map */

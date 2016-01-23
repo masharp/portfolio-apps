@@ -1,0 +1,45 @@
+  <!DOCTYPE html>
+
+<html ng-app="news">
+<head>
+  <meta charset="utf-8">
+  <meta description content="FreeCodeCamp Popular News">
+  <!--[if lt IE 9]>
+                <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+            <![endif]-->
+
+  <!--Imports -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+  <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+
+  <script type="text/javascript" src="app.js"></script>
+  <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
+
+  <title>FreeCodeCamp News | Find the latest Camper stories!</title>
+  <noscript>This application requires JavaScript to function. Please enable scripts in your browser.</noscript>
+</head>
+
+<body>
+  <div id="header" class="container">
+    <span><h3 class="pull-right">FreeCodeCamp</h3></span>
+    <span><h2>CamperNews</h2></span>
+  </div>
+  <div id="stories" class="container" ng-controller="NewsController as news">
+    <div ng-repeat="columns in news.stories">
+      <ul class="list-group">
+        <a ng-repeat="story in columns" target="_blank" href="{{story.link}}">
+          <li class="list-group-item">
+            {{story.headline | limitTo:50}}
+            <p>Votes:  <i class="fa fa-arrow-up"></i> {{story.upVotes.length}}</p>
+          </li>
+        </a>
+      </ul>
+    </div>
+  </div>
+</body>
+
+</html>

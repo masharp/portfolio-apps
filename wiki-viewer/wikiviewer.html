@@ -1,0 +1,40 @@
+<html ng-app="viewer">
+<head>
+  <meta charset="utf-8">
+  <meta description content="Wikipedia Article Viewer">
+  <!--[if lt IE 9]>
+                <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+            <![endif]-->
+
+  <title>Wikipedia Viewer | Search and View Your Favorite Articles.</title>
+  <noscript>This application requires JavaScript to function. Please enable scripts in your browser.</noscript>
+</head>
+
+
+<body>
+  <div id="main" ng-controller="ViewController as view" class="container">
+    <h2 class="pull-right header">WikiViewer</h2>
+    <div id="spacer" ng-hide="view.hide"/></div>
+    <div id="search">
+      <form ng-submit="view.getArticles()"/>
+      <input type="text" ng-model="searchText"/>
+      <i class="fa fa-search" ng-click="view.getArticles()"></i>
+    </div>
+    <h3 ng-show="view.show">{{view.results}} results.</h3>
+    <h3 ng-hide="view.hide">enter an article to begin</h3>
+    <a id="random" href="https://en.wikipedia.org/wiki/Special:Random" target="_blank" ng-hide="view.hide">
+      <i class="fa fa-random"></i>
+    </a>
+    <div id="articles" ng-show="view.show">
+      <ul ng-repeat="article in view.articles">
+        <li>
+          <a target="_blank" href="{{article.page}}">
+            <h2>{{article.title}}</h2>
+            <p>{{article.body}}...</p>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

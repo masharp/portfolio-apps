@@ -1,0 +1,50 @@
+body {
+  background-color: #457E86; }
+
+#top {
+  background-color: #663300;
+  color: white;
+  width: 100%; }
+  #top h1 {
+    text-align: center; }
+
+.content {
+  text-align: center; }
+  .content table {
+    width: 100%;
+    margin: 15px;
+    font-size: 15px;
+    background-color: white; }
+  .content td, .content th {
+    border: 2px solid #663300;
+    padding: 1.8rem;
+    padding-left: 1rem; }
+  .content th {
+    font-size: 20px;
+    text-align: center; }
+  .content td {
+    color: #663300; }
+  .content .rank {
+    color: green; }
+  .content .leaderName {
+    font-weight: bold; }
+  .content .score {
+    color: #457E86;
+    font-weight: bold; }
+  .content .leaderSort {
+    margin: 15px; }
+    .content .leaderSort label {
+      color: white;
+      font-size: 20px; }
+    .content .leaderSort input {
+      margin: 10px; }
+
+.footer {
+  text-align: center;
+  padding-top: 20px;
+  color: #663300; }
+  .footer a {
+    color: white;
+    text-decoration: none; }
+
+/*# sourceMappingURL=style.css.map */

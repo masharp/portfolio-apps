@@ -1,0 +1,40 @@
+body {
+  background-color: #32AADD;
+  font-family: "Lato", Helvetica, sans-serif;
+  color: #0E84B7; }
+
+#header {
+  text-align: center;
+  color: #fff; }
+  #header h1 {
+    font-size: 3em; }
+  #header h2 {
+    font-size: 2em; }
+
+#products {
+  height: 600px;
+  width: 600px; }
+  #products li {
+    margin-bottom: 10px; }
+  #products img {
+    width: 155px;
+    height: 155px; }
+
+.panel {
+  color: #000; }
+  .panel h4 {
+    font-weight: bold;
+    color: #32AADD; }
+
+#rev-panel .ng-invalid, #rev-panel .ng-dirty {
+  border-color: red; }
+#rev-panel .ng-valid, #rev-panel .ng-dirty {
+  border-color: green; }
+#rev-panel i {
+  font-size: 2em; }
+#rev-panel .fa-check {
+  color: green; }
+#rev-panel .fa-exclamation {
+  color: red; }
+
+/*# sourceMappingURL=output-style.css.map */

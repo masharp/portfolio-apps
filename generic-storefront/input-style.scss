@@ -1,0 +1,57 @@
+$font: "Lato", Helvetica, sans-serif;
+$primary-color: #32AADD;
+$secondary-color: #0E84B7;
+
+
+body {
+  background-color: $primary-color;
+  font-family: $font;
+  color: $secondary-color;
+}
+
+#header {
+  text-align: center;
+  color: #fff;
+
+  h1 {
+    font-size: 3em;
+  }
+  h2 {
+    font-size: 2em;
+  }
+}
+#products {
+  height: 600px;
+  width: 600px;
+  li {
+    margin-bottom: 10px;
+  }
+  img {
+    width: 155px;
+    height: 155px;
+  }
+}
+.panel {
+  color: #000;
+  h4 {
+    font-weight: bold;
+    color: $primary-color;
+  }
+}
+#rev-panel {
+  .ng-invalid, .ng-dirty {
+    border-color: red;
+  }
+  .ng-valid, .ng-dirty {
+    border-color: green;
+  }
+  i {
+    font-size: 2em;
+  }
+  .fa-check {
+    color: green;
+  }
+  .fa-exclamation {
+    color: red;
+  }
+}

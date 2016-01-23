@@ -1,0 +1,81 @@
+<html ng-app="TwitchEm">
+<head>
+  <meta charset="utf-8">
+  <meta description content="A Twitch streamer following app.">
+  <!--[if lt IE 9]>
+                <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+            <![endif]-->
+
+  <!--Imports -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+  <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+
+  <script type="text/javascript" src="script.js"></script>
+  <link rel="stylesheet" type="text/css" href="output-style.css"/>
+
+  <title>Twitch'Em | Follow your favorite Twitch Streamers</title>
+  <noscript>This application requires JavaScript to function. Please enable scripts in your browser.</noscript>
+</head>
+
+<main>
+  <h1 class="title">Twitch'Em</h1>
+  <section id="app" ng-controller="AppController as app">
+    <div id="search"><i class="fa fa-search"></i>
+      <input type="text" ng-model="searchText"/>
+    </div>
+    <section ng-controller="PanelController as panel">
+      <ul id="menu" class="nav">
+        <li ng-class="{active: panel.isSelected(0)}">
+          <a href ng-click="panel.selectTab(0)">All</a>
+        </li>
+        <li ng-class="{active: panel.isSelected(1)}">
+          <a href ng-click="panel.selectTab(1)">Online</a>
+        </li>
+        <li ng-class="{active: panel.isSelected(2)}">
+          <a href ng-click="panel.selectTab(2)">Offline</a>
+        </li>
+      </ul>
+      <div class="panel" ng-show="panel.isSelected(0)">
+        <ul>
+          <a target="_blank" ng-repeat="channel in app.all | filter:searchText" href="http://twitch.tv/{{channel.username}}" >
+            <li>
+              <img ng-src="{{channel.logo}}" err-src="http://placehold.it/50x50"/>
+              <span>{{channel.name}}</span>
+              <span><i class="{{channel.status}} pull-right"></i></span>
+              <p>{{channel.title}}</p>
+            </li>
+          </a>
+        </ul>
+      </div>
+      <div class="panel" ng-show="panel.isSelected(1)">
+        <ul>
+          <a target="_blank" ng-repeat="channel in app.online | filter:searchText" href="http://twitch.tv/{{channel.username}}" >
+            <li>
+              <img ng-src="{{channel.logo}}" err-src="http://placehold.it/50x50"/>
+              <span>{{channel.name}}</span>
+              <span><i class="{{channel.status}} pull-right"></i></span>
+              <p>{{channel.title}}</p>
+            </li>
+          </a>
+        </ul>
+      </div>
+      <div class="panel" ng-show="panel.isSelected(2)">
+        <ul>
+          <a target="_blank" ng-repeat="channel in app.offline | filter:searchText" href="http://twitch.tv/{{channel.username}}" >
+            <li>
+              <img ng-src="{{channel.logo}}" err-src="http://placehold.it/50x50"/>
+              <span>{{channel.name}}</span>
+              <span><i class="{{channel.status}} pull-right"></i></span>
+              <p>{{channel.title}}</p>
+            </li>
+          </a>
+        </ul>
+      </div>
+    </section>
+  </section>
+</main>
+
+</html>

@@ -1,0 +1,46 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta description content="A pomodoro timer for timing your coding sessions.">
+  <!--[if lt IE 9]>
+                <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+            <![endif]-->
+
+  <!-- Plugin Imports -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+  <!-- Local Imports -->
+  <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
+  <script type="text/javascript" src="script.js"></script>
+
+  <title>Your Coding Pomodoro | by Michael Sharp</title>
+</head>
+
+<body>
+  <noscript>This application requires JavaScript to function. Please enable scripts in your browser.</noscript>
+
+  <div id="top" class="container">
+    <h2 id="title">CodeSessions</h2>
+    <div id="selectors">
+      <div id="break-selector">
+        <p>BREAK LENGTH</p>
+        <button class="minus">-</button><span class="num-time"></span><button class="plus">+</button>
+      </div>
+      <div id="session-selector">
+        <p>SESSION LENGTH</p>
+        <button class="minus">-</button><span class="num-time"></span><button class="plus">+</button>
+    </div>
+  </div>
+  <div id="stopwatch-area">
+    <div id="stopwatch">
+      <p id="stopwatch-title"></p>
+      <p id="stopwatch-time"></p>
+    </div>
+    <span id="stopwatch-start">Start</span>
+  </div>
+
+</body>
+</html>

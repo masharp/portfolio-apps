@@ -1,0 +1,48 @@
+html, body {
+  text-align: center;
+  background-color: gray;
+}
+#title {
+  padding-top: 20px;
+  text-shadow: 3px 2px 3px #000;
+  color: #fff;
+  font-size: 45px;
+}
+#body {
+  color: #fff;
+  font-size: 20px;
+  padding-top: 20px;
+}
+#quote-machine {
+  padding-top: 20px;
+}
+#quote-btn {
+  font-size: 30px;
+  height: 50px;
+  width: 200px;
+  background-color: purple;
+  border: 0;
+  color: #fff;
+  margin-bottom: 20px;
+  box-shadow: 10px 10px 10px #000;
+}
+#quote-btn:hover {
+  background-color: #fff;
+  color: purple;
+}
+#quote-text {
+  max-width: 400px;
+  max-height: 300px;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 10px 10px 10px #000;
+}
+#quote-text span {
+  font-color: purple;
+  font-size: 24px;
+}
+#quote-text #author {
+  font-style: italic;
+  font-size: 19px;
+}

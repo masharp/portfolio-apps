@@ -1,0 +1,74 @@
+body {
+  font-family: "Lato", Helvetica, sans-serif;
+  background-color: #6632DD;
+  color: #A9DD32;
+  vertical-align: baseline;
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px; }
+  body .title {
+    color: #fff; }
+
+#app {
+  margin: 20px auto;
+  padding-top: 10px;
+  background-color: #A9DD32;
+  width: 30%;
+  display: flex;
+  flex-direction: column; }
+
+#search {
+  padding-top: 10px; }
+  #search i {
+    padding-right: 10px;
+    font-size: 1.5em;
+    color: #6632DD; }
+  #search input {
+    width: 60%;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    padding-left: 5px;
+    color: #6632DD; }
+    #search input:focus {
+      outline: none; }
+
+#menu {
+  padding: 0;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin: 0; }
+  #menu li {
+    font-size: 1.3em;
+    text-align: center;
+    display: inline-block;
+    padding: .5em;
+    margin: 0;
+    width: 30%;
+    color: #fff;
+    cursor: pointer; }
+
+.panel {
+  background-color: #A9DD32;
+  color: #fff;
+  text-align: left; }
+  .panel a:hover {
+    text-decoration: none; }
+  .panel li {
+    padding-bottom: 10px; }
+    .panel li span {
+      padding-left: 15px; }
+    .panel li i {
+      padding-right: 10px; }
+    .panel li p {
+      padding-top: 5px;
+      font-weight: lighter;
+      font-size: .8em; }
+  .panel img {
+    width: 50px;
+    height: 50px; }
+  .panel .fa-check {
+    color: green; }
+  .panel .fa-exclamation {
+    color: red; }
+
+/*# sourceMappingURL=output-style.css.map */

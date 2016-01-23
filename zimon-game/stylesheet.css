@@ -1,0 +1,90 @@
+body {
+  background-color: #ccc; }
+
+.overlay {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.2);
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 10; }
+  .overlay .messageBox {
+    font-size: 40px;
+    color: red;
+    border-radius: 25px;
+    background-color: white;
+    text-align: center;
+    margin: 15% auto;
+    height: 200px;
+    width: 40%;
+    padding-top: 10px; }
+    .overlay .messageBox p {
+      font-size: 25px;
+      color: black; }
+    .overlay .messageBox button {
+      border-radius: 10px;
+      font-size: 40px;
+      width: 100px; }
+    .overlay .messageBox #restart {
+      color: green;
+      font-size: 40px;
+      width: 100px;
+      border-radius: 10px; }
+      .overlay .messageBox #restart:hover {
+        background-color: #60FF90; }
+
+#game {
+  padding-top: 20px;
+  margin: 0 auto;
+  vertical-align: middle;
+  text-align: center; }
+  #game .tile {
+    width: 250px;
+    height: 150px;
+    margin: 15px; }
+  #game .row {
+    padding-top: 20px; }
+  #game #tile1 {
+    background-color: blue; }
+    #game #tile1:hover {
+      opacity: .7; }
+  #game #tile2 {
+    background-color: green; }
+    #game #tile2:hover {
+      opacity: .7; }
+  #game #tile3 {
+    background-color: red; }
+    #game #tile3:hover {
+      opacity: .7; }
+  #game #tile4 {
+    background-color: orange; }
+    #game #tile4:hover {
+      opacity: .7; }
+
+#controller {
+  padding-top: 50px;
+  margin: 0 auto;
+  vertical-align: middle;
+  text-align: center; }
+  #controller label {
+    font-size: 20px;
+    margin-right: 10px;
+    margin-left: 10px; }
+  #controller input {
+    text-align: right;
+    font-size: 30px;
+    width: 10%;
+    padding-right: 5px; }
+  #controller i {
+    margin-top: 10px;
+    padding: 10px 20px 10px 20px;
+    font-size: 30px; }
+    #controller i:hover {
+      background-color: #60FF90; }
+  #controller #start {
+    color: blue; }
+  #controller #reset {
+    color: green; }
+
+/*# sourceMappingURL=stylesheet.css.map */

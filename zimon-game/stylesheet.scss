@@ -1,0 +1,120 @@
+$green: green;
+$blue: blue;
+$red: red;
+$orange: orange;
+
+body{
+  background-color: #ccc;
+}
+.overlay {
+  position: absolute;
+  background-color: rgba(0,0,0, 0.2);
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+
+  .messageBox {
+    font-size: 40px;
+    color:$red;
+    border-radius: 25px;
+    background-color: white;
+    text-align: center;
+    margin: 15% auto;
+    height: 200px;
+    width: 40%;
+    padding-top: 10px;
+
+    p {
+      font-size: 25px;
+      color: black;
+    }
+    button {
+      border-radius: 10px;
+      font-size: 40px;
+      width: 100px;
+    }
+    #restart {
+      color: $green;
+      font-size: 40px;
+      width: 100px;
+      border-radius: 10px;
+
+      &:hover {
+        background-color: #60FF90;
+      }
+    }
+  }
+}
+#game {
+  padding-top: 20px;
+  margin: 0 auto;
+  vertical-align: middle;
+  text-align: center;
+
+  .tile {
+    width: 250px;
+    height: 150px;
+    margin: 15px;
+  }
+  .row {
+    padding-top: 20px;
+  }
+  #tile1 {
+    background-color: $blue;
+    &:hover {
+      opacity: .7;
+    }
+  }
+  #tile2 {
+    background-color: $green;
+    &:hover {
+      opacity: .7;
+    }
+  }
+  #tile3 {
+    background-color: $red;
+    &:hover {
+      opacity: .7;
+    }
+  }
+  #tile4 {
+    background-color: $orange;
+    &:hover {
+      opacity: .7;
+    }
+  }
+}
+#controller {
+  padding-top: 50px;
+  margin: 0 auto;
+  vertical-align: middle;
+  text-align: center;
+
+  label {
+    font-size: 20px;
+    margin-right: 10px;
+    margin-left: 10px;
+  }
+  input {
+    text-align: right;
+    font-size: 30px;
+    width: 10%;
+    padding-right: 5px;
+  }
+  i {
+    margin-top: 10px;
+    padding: 10px 20px 10px 20px;
+    font-size: 30px;
+    &:hover {
+      background-color: #60FF90;
+    }
+  }
+  #start {
+    color: $blue;
+  }
+  #reset {
+    color: $green;
+  }
+}

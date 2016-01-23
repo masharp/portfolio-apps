@@ -1,0 +1,49 @@
+$font: "Lato", Helvetica, sans-serif;
+$primary-color: #A0522D;
+$secondary-color: #32AADD;
+$tertiary-color: #fff;
+
+
+body {
+  background-color: $primary-color;
+  font-family: $font;
+  font-size: 40px;
+}
+#header {
+  h2 {
+    text-align: center;
+    font-size: 1em;
+  }
+  h3 {
+    color: $tertiary-color;
+    font-size: .6em;
+  }
+}
+#stories {
+  font-size: .5em;
+  text-align: center;
+
+  li {
+    background-color: $secondary-color;
+    color: $tertiary-color;
+    display: block;
+    float: left;
+    width: 300px;
+    height: 100px;
+    margin: 5px;
+    padding: 5px;
+
+    p {
+      padding-top: 10px;
+      font-size: .7em;
+      i {
+        color: green;
+      }
+    }
+
+    &:hover {
+      background-color: $tertiary-color;
+      color: $secondary-color;
+    }
+  }
+}

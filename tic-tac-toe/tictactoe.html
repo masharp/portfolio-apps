@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta description content="A tic-tac-toe game.">
+  <!--[if lt IE 9]>
+                <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+            <![endif]-->
+
+  <!--Imports -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+  <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  <link href='https://fonts.googleapis.com/css?family=Poiret+One' rel='stylesheet' type='text/css'>
+
+  <script type="text/javascript" src="script.js"></script>
+  <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
+
+  <title>Tic-Tac-Toe!</title>
+  <noscript>This application requires JavaScript to function. Please enable scripts in your browser.</noscript>
+</head>
+
+<body>
+  <div id="begin" class="overlay">
+    <div class="messageBox">
+      <div>TicTacToe!
+        <p>Player One: Choose your mark!</p>
+      </div>
+      <button id="xSelect" type="button" class="btn"><i class="fa fa-times"></i></button>
+      <button id="oSelect" type="button" class="btn"><i class="fa fa-circle-o"></i></button>
+    </div>
+  </div>
+  <div id="begin-select" class="overlay">
+      <div class="messageBox">
+        <div>Players
+          <p>Is the other player a friend or the AI?</p>
+        </div>
+        <button id="twoPlayer" type="button" class="btn"><i class="fa fa-user"></i></button>
+        <button id="singlePlayer" type="button" class="btn"><i class="fa fa-desktop"></i></button>
+      </div>
+  </div>
+  <div id="end" class="overlay">
+    <div class="messageBox">
+      Game Over!</br>
+      <p id="winnerMessage"></p>
+      <div id="reset" class="btn"><i class="fa fa-refresh"></i></div>
+    </div>
+  </div>
+  <section id="board"  class="container">
+    <div class="row">
+      <div id="0" class="btn tac"></div>
+      <div id="1" class="btn tac"></div>
+      <div id="2" class="btn tac"></div>
+    </div>
+    <div class="row">
+      <div id="3" class="btn tac"></div>
+      <div id="4" class="btn tac"></div>
+      <div id="5" class="btn tac"></div>
+    </div>
+    <div class="row">
+      <div id="6" class="btn tac"></div>
+      <div id="7" class="btn tac"></div>
+      <div id="8" class="btn tac"></div>
+    </div
+  </section>
+  <div id="player-select" class="container">
+    <span>
+<!--  <input id="twoP" type="radio" name="players" checked/><label for="twoP" class="btn">2-Player</label>
+      <input id="oneP" type="radio" name="players" /><label for="oneP" class="btn">1-Player</label>
+-->
+      <div id="restart" class="btn"><i class="fa fa-refresh"></i></div>
+    </span>
+  </div>
+</body>
+</html>

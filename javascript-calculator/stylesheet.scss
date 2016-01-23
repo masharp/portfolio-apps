@@ -1,0 +1,52 @@
+$font: 'Poiret One', cursive;
+$primary-color: #000;
+$secondary-color: #C500A9;
+$tertiary-color: #fff;
+
+body {
+  font-size: 40px;
+  background-color: $tertiary-color;
+  color: $secondary-color;
+}
+#calc {
+  margin: 0 auto;
+  margin-top: 10%;
+  height: 60%;
+  width: 25%;
+  background-color: $primary-color;
+}
+input {
+  text-align: right;
+  font-size: .8em;
+  background-color: $primary-color;
+  color: $tertiary-color;
+  margin-top: 20px;
+  margin-left: 30px;
+  margin-bottom: 15px;
+  width: 80%;
+  border: 2px solid $secondary-color;
+  padding-right: 5px;
+  padding-left: 5px;
+}
+#pad {
+  padding-bottom: 5px;
+  
+  button {
+    font-size: .7em;
+    margin-left: 5px;
+    width: 5%;
+    background-color: $primary-color;
+    border: none;
+
+    &:hover {
+      background-color: $tertiary-color;
+      color: $secondary-color;
+      cursor: pointer;
+    }
+  }
+  #zero {
+    text-align: left;
+    width: 135px;
+    padding-left: 20px;
+  }
+}

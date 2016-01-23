@@ -1,0 +1,156 @@
+<@<!DOCTYPE html>
+
+<html>
+
+<head>
+  <!-- Plugin Imports -->
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+  <!-- Local Imports -->
+  <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
+  <link rel="stylesheet" type="text/css" href="custom-navbar.css"/>
+
+  <noscript>
+    <h3>This site requires JavaScript</h3>
+  </noscript>
+
+  <title>Michael Sharp | Portfolio</title>
+</head>
+
+<body>
+<!--Static Top-Navbar -->
+  <nav id="top-nav" class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#home">Michael Sharp</a>
+        </div>
+        <div id="nav-contents" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li> <a id="navbar-home-btn" class="btn" href="#home">Home</a></li>
+            <li> <a id="navbar-about-btn" class="btn" href="#about">About</a></li>
+            <li> <a id="navbar-portfolio-btn" class="btn" href="#portfolio-section">Portfolio</a></li>
+            <li> <a id="navbar-contact-btn" class="btn" href="#contact">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+  </nav>
+  <!------>
+
+  <!--- Home Section -->
+  <div id="home">
+    <div>
+      <div id="home-text" class="containter">
+        <h1>(lo)Development </br>
+          by Michael Sharp</h1>
+        <h3>A place for my computer creations.</h3>
+      </div>
+    </div>
+  </div>
+  <!------>
+
+  <!-- About Section -->
+  <div id="about">
+    <div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-5 col-sm-6">
+            <div class="clearfix"></div>
+            <h2 id="about-header">(lo)Development by Michael Sharp</h2>
+            </br>
+            <p id="about-description">I am a self-taught developer and engineer located in the United States.
+              I have a wide range of interests in the field, but love solving challenges and using computer science
+              to fuel and fulfill my creative appetite.</br>
+            </br>
+              Knowledge: </br>
+              &nbsp&nbsp Languges - Java, C++, JavaScript, SQL, HTML5/CSS3</br>
+              &nbsp&nbsp Frameworks - Bootstrap, jQuery, JavaFX, ORM </br>
+              &nbsp&nbsp Tools - Git, Eclipse, Linux, Gradle
+            </p>
+          </div>
+          <div class="col-lg-5 col-lg-offset-2 col-sm-6">
+            <img id="about-img" class="img-circle img-responsive" src="assets/profile-img.jpg" alt="Michael Sharp" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!------>
+
+  <!-- Portfolio Section -->
+  <div id="portfolio-section"></div>
+  <section id="portfolio" class="bounds">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12 text-center">
+          <h2 >My Portfolio</h2>
+          <h3>Here is a slice of recent work:</h3>
+        </div>
+      </div>
+      <!------>
+
+      <div class="row">
+      <!-- Portfolio Item #1 -->
+        <div class="col-md-4 col-sm-6 portfolio-item">
+          <a class="item-link" href="" target="_blank" data-toggle="modal">
+            <div class="portfolio-hover">
+              <div class="hover-img">
+                <i class="fa fa-cloud fa-3x"></i>
+              </div>
+            </div>
+            <img class="img-responsive" src="assets/apptlog_screen_login.png" alt="ApptLog-Java" />
+          </a>
+          <div id="portfolio-caption">
+            <h4>ApptLog JavaFX Project</h4>
+            <p id="small-caption" class="text-muted">Java, JavaFX and H2 SQL</p>
+          </div>
+        </div>
+      <!------>
+
+      <!--Portfolio Item #2 -->
+        <div class="col-md-4 col-sm-6 portfolio-item">
+            <a class="item-link" href="" target="_blank" data-toggle="modal">
+              <div class="portfolio-hover">
+                <div class="hover-img">
+                  <i class="fa fa-cloud fa-3x"></i>
+                </div>
+              </div>
+              <img class="img-responsive" src="assets/apptlogweb_screen_home.png" alt="ApptLog-Web" />
+            </a>
+            <div id="portfolio-caption">
+              <h4>ApptLog Web Application</h4>
+              <p id="small-caption" class="text-muted">JavaScript, Bootstrap and SQL</p>
+          </div>
+        </div>
+        <!------>
+      </div>
+    </div>
+  </section>
+  <!------>
+
+  <!--Contact Section -->
+  <div id="contact">
+    <div>
+      <div class="container">
+        <h2 id="email-contact">Contact me directly by email at: msharp.oh@gmail.com</h2>
+        <div id="social-links">
+          <a id="twitter" class="btn btn-default btn-lg" href="" target="_blank"><i class="fa fa-twitter fa-fw"></i> <span class="social-network">Twitter</span></a>
+          <a id="github" class="btn btn-default btn-lg" href="" target="_blank"><i class="fa fa-github fa-fw"></i> <span class="social-network">GitHub</span></a>
+          <a id="linkedin" class="btn btn-default btn-lg" href="" target="_blank"><i class="fa fa-linkedin fa-fw"></i> <span class="social-network">LinkedIn</span></a>
+          <a id="wordpress" class="btn btn-default btn-lg" href="" target="_blank"><i class="fa fa-wordpress fa-fw"></i> <span class="social-network">Wordpress</span></a>
+          <a id="freecodecamp" class="btn btn-default btn-lg" href="" target="_blank"><i class="fa fa-fire fa-fw"></i> <span class="social-network">freeCodeCamp</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!------>
+
+  <!-- Footer -->
+  <div id="footer" class="container">
+    <p id="copyright" class="text-muted small">&copy Michael Sharp 2015. All Rights Reserved.</p>
+  </div>
+  <!------>
+</body>
+</html>

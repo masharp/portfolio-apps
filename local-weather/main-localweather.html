@@ -1,0 +1,61 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta description content="Get your local weather.">
+  <!--[if lt IE 9]>
+                <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+            <![endif]-->
+
+  <!-- Plugin Imports -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+  <!-- Local Imports -->
+  <script type"text/javascript" src="flowtype.js"></script>
+  <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
+  <script type="text/javascript" src="script.js"></script>
+
+  <title>Your Local Weather | by Michael Sharp</title>
+</head>
+
+<body>
+  <noscript>This application requires JavaScript to function. Please enable scripts in your browser.</noscript>
+  <div id="app" class="container">
+    <div id="main" class="container">
+      <h2>Your Local Weather</h1>
+      <h3>Enter your local city:</h2>
+        <input id="input-box" type="text">
+    </div>
+  </br>
+    <div id="forecast" class="container">
+      <div class="row">
+        <div class="col-xs-3 day">
+          <p id="weather0" class="weather"></p>
+          <p id="temp0" class="temp"></p>
+          <i id="day0" class="weather-day"></i>
+        </div>
+        <div class="col-xs-3 day">
+          <p id="weather1" class="weather"></p>
+          <p id="temp1" class="temp"></p>
+          <i id="day1" class="weather-day"></i>
+        </div>
+        <div class="col-xs-3 day">
+          <p id="weather2" class="weather"></p>
+          <p id="temp2" class="temp"></p>
+          <i id="day2" class="weather-day"></i>
+        </div>
+        <div class="col-xs-3 day">
+          <p id="weather3" class="weather"></p>
+          <p id="temp3" class="temp"></p>
+          <i id="day3" class="weather-day"></i>
+        </div>
+      </div>
+    </div>
+    <label class="radio-inline" for="fahrenheit"><input id="fahrenheit" type="radio" name="temp-measure" checked="checked">Fahrenheit</label>
+    <label class="radio-inline" for="celsius"><input id="celsius" type="radio" name="temp-measure">Celsius</label>
+    <div id="errors" class="container"></div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,21 @@
+body, html {
+  background-color: #999999;
+  font-size: 20px; }
+
+h1 {
+  text-align: center; }
+
+#main {
+  margin: 0 auto;
+  margin-top: 5em;
+  width: 90%;
+  height: auto;
+  background-color: #cccccc;
+  padding: 1em; }
+
+textarea {
+  height: 20em;
+  width: 75%;
+  resize: vertical; }
+
+/*# sourceMappingURL=style.css.map */

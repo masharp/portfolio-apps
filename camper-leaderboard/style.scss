@@ -1,0 +1,65 @@
+body {
+  background-color: #457E86;
+}
+#top {
+  background-color: #663300;
+  color: white;
+  width: 100%;
+
+  h1 {
+    text-align: center;
+  }
+}
+.content {
+  text-align: center;
+  table {
+    width: 100%;
+    margin: 15px;
+    font-size: 15px;
+    background-color: white;
+  }
+  td, th {
+    border: 2px solid #663300;
+    padding: 1.8rem;
+    padding-left: 1rem;
+  }
+  th {
+    font-size: 20px;
+    text-align: center;
+  }
+  td {
+    color: #663300;
+  }
+  .rank {
+    color: green;
+  }
+  .leaderName {
+    font-weight: bold;
+  }
+  .score {
+    color: #457E86;
+    font-weight: bold;
+  }
+  .leaderSort {
+    margin: 15px;
+
+    label {
+      color: white;
+      font-size: 20px;
+    }
+
+    input {
+      margin: 10px;
+    }
+  }
+}
+.footer {
+  text-align: center;
+  padding-top: 20px;
+  color: #663300;
+
+  a {
+    color: white;
+    text-decoration: none;
+  }
+}

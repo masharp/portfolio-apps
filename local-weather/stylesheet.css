@@ -1,0 +1,67 @@
+html, body {
+  font-family: 'Lato', Helvetica, sans-serif;
+  background: url("http://i.imgur.com/0fDlFt5.jpg") no-repeat center center fixed;
+  font-size: 18px;
+  overlower: hidden;
+  background-size: cover;
+  vertical-align: baseline;
+  text-align: center;
+}
+h2, h3 {
+  line-height: 1.45;
+  padding: 0px;
+  margin: 0px;
+}
+#app {
+  margin: auto;
+  padding-top: 1%;
+}
+#main h2, h3 {
+  color: #fff;
+  text-shadow: 3px 3px 3px #000;
+}
+#main h2 {
+  font-size: 1.2em;
+}
+#main h3 {
+  font-size: .8em;
+  padding-bottom: 5px;
+}
+#input-box {
+  color: #B7410E;
+  font-size: .8em;
+  text-align: center;
+  box-shadow: 5px 5px 5px #000;
+  background-color: #86DBFF;
+  border: 0;
+}
+#forecast {
+  color: #fff;
+  background-color: #0E84B7;
+  width: 70%;
+  height: 30%;
+  padding: 0;
+  box-shadow: 8px 8px 8px #000;
+}
+#forecast .day {
+  padding-top: 7px;
+}
+#forecast .weather {
+  font-size: .7em;
+}
+#forecast .temp {
+  font-size: .9em;
+}
+#forecast .weather-day {
+  font-style: normal;
+  font-size: .6em;
+  color: #B7410E;
+}
+label {
+  padding-top: 10px;
+  color: #fff;
+  font-size: .8em;
+}
+#errors {
+  color: red;
+}

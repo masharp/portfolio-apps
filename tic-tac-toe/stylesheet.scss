@@ -1,0 +1,117 @@
+$font: 'Poiret One', cursive;
+$primary-color: #fff;
+$secondary-color: #60CFFF;
+$tertiary-color: #FF60CF;
+$quadrary-color: #60FF90;
+
+body {
+  font-size: 40px;
+  background-color: $primary-color;
+}
+.overlay {
+  position: absolute;
+  background-color: rgba(0,0,0, 0.2);
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+
+  .messageBox {
+    font-size: 1em;
+    border-radius: 25px;
+    background-color: white;
+    text-align: center;
+    margin: 15% auto;
+    height: 200px;
+    width: 40%;
+    padding-top: 10px;
+
+    p {
+      font-size: .6em;
+    }
+    button {
+      border-radius: 10px;
+      font-size: 1em;
+      width: 100px;
+    }
+  }
+  #xSelect {
+    background-color: $quadrary-color;
+    &:hover {
+      background-color: $primary-color;
+    }
+  }
+  #oSelect {
+    background-color: $secondary-color;
+    &:hover {
+      background-color: $primary-color;
+    }
+  }
+
+  #twoPlayer {
+    background-color: $quadrary-color;
+    &:hover {
+      background-color: $primary-color;
+    }
+  }
+  #singlePlayer {
+    background-color: $secondary-color;
+    &:hover {
+      background-color: $primary-color;
+    }
+  }
+  #reset {
+    font-size: 1em;
+    background-color: $quadrary-color;
+    width: 100px;
+    border-radius: 10px;
+
+    &:hover {
+      background-color: $primary-color;
+    }
+  }
+}
+
+#board {
+  margin: 0 auto;
+  margin-top: 10px;
+  vertical-align: middle;
+  text-align: center;
+
+  .tac {
+    background-color: $tertiary-color;
+    height: 13em;
+    width: 20%;
+    margin-top: 10px;
+    margin-right: 10px;
+    border-radius: 10px;
+
+    i {
+      font-size: 10em;
+      color: #000 !important;
+    }
+  }
+}
+#player-select {
+  padding-top: 10px;
+
+  input {
+    display: none;
+
+    &:checked + label {
+      background-color: $secondary-color;
+      color: $primary-color;
+    }
+  }
+  .btn {
+    font-size: .7em;
+    height: 50px;
+    background-color: $tertiary-color;
+    color: $primary-color;
+    border-radius: 10px;
+  }
+  #restart {
+    background-color: $quadrary-color;
+  }
+}
