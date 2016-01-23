@@ -10,7 +10,10 @@
       - Any live cell with more than three live neighbours dies, as if by over-population.
       - Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 
+      by Michael A Sharp
       www.softwareontheshore.com
+
+      TODO: Fix board component mounting flow
 */
 
 "use strict";
@@ -48,7 +51,7 @@ const Game = React.createClass({ displayName: "Game",
   },
 
   componentDidMount: function componentDidMount() {
-    this.initiateBoard(200);
+    this.initiateBoard(500);
   },
 
 
@@ -59,7 +62,7 @@ const Game = React.createClass({ displayName: "Game",
   generateBoard: function generateBoard(boardState) {
     let generatedBoard = [];
     let tileKey = 0;
-    boardState = boardState ? boardState : [-1];
+    boardState = boardState.length > 0 ? boardState : [-1];
 
     for(let j = 0; j < this.props.boardHeight; j++) {
       let id = "";
@@ -80,7 +83,7 @@ const Game = React.createClass({ displayName: "Game",
         tileKey++;
       }
     }
-    this.setState({ board: generatedBoard });
+    this.setState({ board: generatedBoard }, this.render);
   },
 
 
@@ -123,10 +126,15 @@ const Game = React.createClass({ displayName: "Game",
 
   /*
   ---- CLEAR FUNCTION -----
-      -resets the board by generating a blank sample array
+      -resets the board via jQuery
   */
   clear: function clear() {
-    this.initiateBoard(0);
+    this.setState({ time: 0}, function clearBoard() {
+      $(".tile").each(function(tile) {
+        $(this).removeClass("alive old dead");
+        $(this).addClass("dead");
+      });
+    });
   },
 
 
@@ -136,8 +144,14 @@ const Game = React.createClass({ displayName: "Game",
   */
   changeTile: function changeTile(event) {
     let target = $("#" + event.target.id);
-    target.removeClass("tile alive dead old");
-    target.addClass("tile alive");
+
+    if(target.hasClass("alive")) {
+      target.removeClass("alive dead old");
+      target.addClass("dead");
+    } else if (target.hasClass("dead")) {
+      target.removeClass("alive dead old");
+      target.addClass("alive");
+    }
   },
 
 
@@ -159,23 +173,62 @@ const Game = React.createClass({ displayName: "Game",
   checkBoard: function checkBoard() {
     let tiles = this.state.board;
     let self = this;
+    let boardLife = 0;
 
+    //check each tile for status and neighbours
     tiles.forEach(function checkTile(tile){
       let tileID = tile.props.id;
       let tileY = Number(tileID.split("-")[0]);
       let tileX = Number(tileID.split("-")[1]);
+      let neighboursAlive = 0;
+      let tileAlive = false;
+
+      //check target tile status
+      if($("#" + tileID).hasClass("alive") || $("#" + tileID).hasClass("old")) {
+        tileAlive = true;
+        boardLife++;
+      }
 
       //figure out which function we should send our tile to in order to find neighbours
       let tileNeighbours =
           (tileY === 0 || tileY === self.props.boardHeight - 1 || tileX === 0 || tileX === self.props.boardWidth) ?
           self.findEdgeNeighbours(tiles, tileID, tileY, tileX) : self.findNeighbours(tiles, tileID, tileY, tileX);
 
+      //check how many of these neighbours are alive
       tileNeighbours.forEach(function checkNeighbourStatus(tile) {
-
-        //$("#" + tile)
+        if($("#" + tile).hasClass("alive")) {
+          neighboursAlive++;
+        }
       });
 
+      //apply new class status based on the Conway's Rules
+
+      //under-population
+      if (tileAlive && neighboursAlive < 2) {
+        $("#" + tileID).removeClass("alive old dead");
+        $("#" + tileID).addClass("dead");
+      }
+
+      //lives on
+      else if (tileAlive && (neighboursAlive === 2 || neighboursAlive == 3)) {
+        $("#" + tileID).removeClass("alive old dead");
+        $("#" + tileID).addClass("old");
+      }
+
+      //over-population
+      else if (tileAlive && neighboursAlive > 3) {
+        $("#" + tileID).removeClass("alive old dead");
+        $("#" + tileID).addClass("dead");
+      }
+
+      //birth
+      else if (!tileAlive && neighboursAlive === 3) {
+        $("#" + tileID).removeClass("alive old dead");
+        $("#" + tileID).addClass("alive");
+      }
     });
+
+    if(boardLife === 0) this.stop();
   },
 
 
@@ -205,26 +258,64 @@ const Game = React.createClass({ displayName: "Game",
   /*
   ---- FIND EDGE NEIGHBOURS FUNCTION -----
       - return 8 neighbours of grid edge cases - wrap around the grid ()[50, 0] left neighbour = [50, 70])
+      - for the corner cases - it seemed better visually and logically to hardcode each neighbour's position.
+        I don't think the amount of code would have been any lower.
   */
   findEdgeNeighbours: function findEdgeNeighbours(tiles, tileID, tileY, tileX) {
     let neighbours = [];
-    let self = this;
+    let self = this.props;
 
     //check for top left corner case
     if (tileY === 0 && tileX === 0) {
+      neighbours.push(tileY + "-" + (tileX + 1));
+      neighbours.push(tileY + "-" + (self.boardWidth - 1));
+      neighbours.push((self.boardHeight - 1) + "-" + (tileX + 1));
+      neighbours.push((boardHeight - 1) + "-" + (self.boardWidth - 1));
+      neighbours.push((self.boardHeight - 1) + "-" + tileX);
+      neighbours.push((tileY - 1) + "-" + (tileX + 1));
+      neighbours.push((tileY - 1) + "-" + (self.boardWidth - 1));
+      neighbours.push((tileY - 1) + "-" + tileX);
 
+      return neighbours;
     }
     //check for top right corner case
-    else if (tileY === (boardHeight - 1) && tileX === (boardWidth - 1)) {
+    else if (tileY === (self.boardHeight - 1) && tileX === (self.boardWidth - 1)) {
+      neighbours.push(tileY + "-" + (tileX - 1));
+      neighbours.push(tileY + "-" + 0);
+      neighbours.push((self.boardHeight - 1) + "-" + 0);
+      neighbours.push((self.boardHeight - 1) + "-" + (tileX - 1));
+      neighbours.push((self.boardHeight - 1) + "-" + tileX);
+      neighbours.push((tileY - 1) + "-" + (tileX - 1));
+      neighbours.push((tileY - 1) + "-" + 0);
+      neighbours.push((tileY - 1) + "-" + tileX);
 
+      return neighbours;
     }
     //check for bottom left corner case
-    else if (tileY === (boardHeight - 1) && tileX === 0) {
+    else if (tileY === (self.boardHeight - 1) && tileX === 0) {
+      neighbours.push(tileY + "-" + (tileX + 1));
+      neighbours.push(tileY + "-" + (self.boardWidth - 1));
+      neighbours.push((tileY + 1) + "-" + (tileX + 1));
+      neighbours.push((tileY + 1) + "-" + tileX);
+      neighbours.push((tileY + 1) + "-" + (self.boardWidth - 1));
+      neighbours.push(0 + "-" + (tileX - 1));
+      neighbours.push(0 + "-" + (self.boardWidth - 1));
+      neighbours.push(0 + "-" + tileX);
 
+      return neighbours;
     }
     //check for bottom right corner case
-    else if (tileY === (boardHeight - 1) && tileX === (boardWidth - 1)){
+    else if (tileY === (self.boardHeight - 1) && tileX === (self.boardWidth - 1)){
+      neighbours.push(tileY + "-" + 0);
+      neighbours.push(tileY + "-" + (tileX - 1));
+      neighbours.push((tileY + 1) + "-" + (tileX - 1));
+      neighbours.push((tileY + 1) + "-" + tileX);
+      neighbours.push((tileY + 1) + "-" + 0);
+      neighbours.push(0 + "-" + (tileX - 1));
+      neighbours.push(0 + "-" + 0);
+      neighbours.push(0 + "-" + tileX);
 
+      return neighbours;
     }
     //check for top row case
     else if (tileY === 0) {
@@ -234,7 +325,7 @@ const Game = React.createClass({ displayName: "Game",
 
       //capture the 3 neighbours wrapped above and below;
       for(let i = tileX + 1; i > tileX - 2; i--) {
-        let neighbourAbove = (boardHeight - 1) + "-" + i;
+        let neighbourAbove = (self.boardHeight - 1) + "-" + i;
         let neighbourBelow = (tileY + 1) + "-" + i;
         neighbours.push(neighbourAbove);
         neighbours.push(neighbourBelow);
@@ -243,7 +334,7 @@ const Game = React.createClass({ displayName: "Game",
       return neighbours;
     }
     //check for bottom row case
-    else if (tileY === (boardHeight - 1)) {
+    else if (tileY === (self.boardHeight - 1)) {
       //get horizontal neighbours
       neighbours.push(tileY + "-" + (tileX + 1));
       neighbours.push(tileY + "-" + (tileX - 1));
@@ -262,22 +353,45 @@ const Game = React.createClass({ displayName: "Game",
     else if (tileX === 0) {
       //tileX = boardWidth - 1
 
-      //get horizontal neighbours
+      //capture horizontal neighbours
       neighbours.push(tileY + "-" + (tileX + 1));
-      neighbours.push(tileY + "-" + (boardWidth - 1));
+      neighbours.push(tileY + "-" + (self.boardWidth - 1));
 
       //capure the 3 neighbours above and below
+      for(let i = tileX + 1; i > tileX - 1; i--) {
+        let neighbourAbove = (tileY - 1) + "-" + i;
+        let neighbourBelow = (tileY + 1) + "-" + i;
+        neighbours.push(neighbourAbove);
+        neighbours.push(neighbourBelow);
+      }
 
+      //capture the wrapped above and wrapped below to the left
+      neighbours.push((tileY - 1) + "-" + (self.boardWidth - 1));
+      neighbours.push((tileY + 1) + "-" + (self.boardWidth - 1));
+
+      return neighbours;
     }
     //check for right column case
-    else if (tile === (boardWidth - 1)) {
+    else if (tile === (self.boardWidth - 1)) {
       //tileX = 0;
 
-      //get horizontal neighbours
+      //capture horizontal neighbours
       neighbours.push(tileY + "-" + 0);
       neighbours.push(tileY + "-" + (tileX - 1));
 
       //capure the 3 neighbours above and below
+      for(let i = tileX + 1; i > tileX - 1; i--) {
+        let neighbourAbove = (tileY - 1) + "-" + i;
+        let neighbourBelow = (tileY + 1) + "-" + i;
+        neighbours.push(neighbourAbove);
+        neighbours.push(neighbourBelow);
+      }
+
+      //capture the wrapped above and wrapped below to the left
+      neighbours.push((tileY - 1) + "-" + 0);
+      neighbours.push((tileY + 1) + "-" + 0);
+
+      return neighbours;
     }
     else {
       console.log("Corner Case Error");

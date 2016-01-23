@@ -58,13 +58,13 @@
          clear: both;
        }
        .dead {
-         background-color: black;
+         background-color: darken(gray, 5);
        }
        .alive {
-         background-color: lighten(green, 20);
+         background-color: lighten(green, 30);
        }
-       .sick {
-         background-color: gray;
+       .old {
+         background-color: darken(green, 5);
        }
     }
   }

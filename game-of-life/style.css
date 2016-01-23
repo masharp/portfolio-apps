@@ -42,11 +42,11 @@
     #main #content #board .tile:nth-child(70n + 1) {
       clear: both; }
     #main #content #board .dead {
-      background-color: black; }
+      background-color: #737373; }
     #main #content #board .alive {
-      background-color: #00e600; }
-    #main #content #board .sick {
-      background-color: gray; }
+      background-color: #1aff1a; }
+    #main #content #board .old {
+      background-color: #006700; }
 
 .footer {
   text-align: center;
