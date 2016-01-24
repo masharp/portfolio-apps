@@ -1,8 +1,12 @@
+body, html {
+  background-color: darken(white, 30);
+}
+
 #top {
   text-align: center;
-  background-color: darken(white, 5);
+  background-color: darken(#32AADD, 10);
   width: 100%;
-  color: lighten(#0000FF, 15);
+  color: white;
 }
 #main {
   #content {
@@ -32,7 +36,7 @@
         }
       }
       #clear-btn {
-        background-color: lighten(gray, 10);
+        background-color: gray;
         color: white;
         &:hover {
           background-color: lighten(lighten(gray, 10), 10);
@@ -41,7 +45,7 @@
     }
     #board {
       margin-top: 10px;
-      border: 1px solid black;
+      border: 2px solid white;
       width: 800px;
       height: 575px;
       margin: 0 auto;
@@ -58,7 +62,7 @@
          clear: both;
        }
        .dead {
-         background-color: darken(gray, 5);
+         background-color: gray;
        }
        .alive {
          background-color: lighten(green, 30);
