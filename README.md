@@ -34,6 +34,4 @@ Languages / Frameworks / Tools:
   5. Dependency Inversion (DIP): ```Interfaces should be small, focused on a specific use case```.
 
 #### The DRY Principle
-```
-Every piece of knowledge must have a single, unambiguous, authoritative representation within a system.
-```
+  * Every piece of knowledge must have a single, unambiguous, authoritative representation within a system.
