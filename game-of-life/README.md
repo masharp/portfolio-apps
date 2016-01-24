@@ -15,3 +15,10 @@ A React-driven app that creates [Conway's cellular automaton](https://en.wikiped
 
 ### Jan. 22, 2016
   * Added all major React functionality and event delegation
+
+### Jan. 25, 2016
+  * Added all app functionality, including finding neighbours and conway's rules
+
+### Jan. 26, 2016
+  * Debugged neighbours and rules algorithms - functionality now working well
+  * Added color to page styling
