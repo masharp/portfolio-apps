@@ -3,7 +3,7 @@ $(document).ready(function() {
       stopwatchTimeElem = $("#stopwatch-time"),
       sessionSelectorElem = $("#session-selector span"),
       breakSelectorElem = $("#break-selector span"),
-      timerSound = new Audio("http://www.wavsource.com/snds_2015-08-30_2631914784717256/sfx/alarm_beep.wav"),
+      timerSound = new Audio("http://www.freespecialeffects.co.uk/soundfx/clocks/clock_chime.wav"),
       breakTime = 5,
       sessionTime = 25,
       sessionStarted = false;

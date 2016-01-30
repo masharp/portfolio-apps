@@ -4,6 +4,9 @@ body, html {
 
 h1 {
   text-align: center; }
+  @media (max-width: 650px) {
+    h1 {
+      font-size: 1.1em; } }
 
 #main {
   margin: 0 auto;
@@ -12,10 +15,33 @@ h1 {
   height: auto;
   background-color: #cccccc;
   padding: 1em; }
+  @media (max-width: 650px) {
+    #main {
+      margin-top: .5em; } }
+  @media (min-width: 650px) and (max-width: 800px) {
+    #main {
+      margin-top: 1em; } }
 
 textarea {
   height: 20em;
   width: 75%;
   resize: vertical; }
+  @media (max-width: 650px) {
+    textarea {
+      width: 100%;
+      height: 12em;
+      font-size: .8em; } }
+  @media (min-width: 650px) and (max-width: 800px) {
+    textarea {
+      width: 100%;
+      height: 12em;
+      font-size: .8em; } }
+
+@media (max-width: 650px) {
+  .content {
+    font-size: .8em; } }
+@media (min-width: 650px) and (max-width: 800px) {
+  .content {
+    font-size: .8em; } }
 
 /*# sourceMappingURL=style.css.map */

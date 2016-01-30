@@ -9,6 +9,12 @@ body {
   height: 60%;
   width: 25%;
   background-color: #000; }
+  @media (max-width: 650px) {
+    #calc {
+      width: 80%; } }
+  @media (min-width: 650px) and (max-width: 800px) {
+    #calc {
+      width: 40%; } }
 
 input {
   text-align: right;
@@ -22,22 +28,50 @@ input {
   border: 2px solid #C500A9;
   padding-right: 5px;
   padding-left: 5px; }
+  @media (max-width: 650px) {
+    input {
+      margin-left: 10px;
+      width: 90%; } }
 
 #pad {
   padding-bottom: 5px; }
+  @media (max-width: 650px) {
+    #pad {
+      padding-left: 15px; } }
+  @media (min-width: 650px) and (max-width: 800px) {
+    #pad {
+      padding-left: 35px; } }
   #pad button {
     font-size: .7em;
     margin-left: 5px;
     width: 5%;
     background-color: #000;
     border: none; }
+    @media (max-width: 650px) {
+      #pad button {
+        margin-left: 1px;
+        width: 20%; } }
     #pad button:hover {
       background-color: #fff;
       color: #C500A9;
       cursor: pointer; }
+  @media (max-width: 650px) {
+    #pad #change-sign {
+      font-size: .5em; } }
+  @media (min-width: 650px) and (max-width: 800px) {
+    #pad #change-sign {
+      font-size: .5em; } }
   #pad #zero {
     text-align: left;
     width: 135px;
     padding-left: 20px; }
+    @media (max-width: 650px) {
+      #pad #zero {
+        width: 90px;
+        padding-left: 10px; } }
+    @media (min-width: 650px) and (max-width: 800px) {
+      #pad #zero {
+        width: 90px;
+        padding-left: 10px; } }
 
 /*# sourceMappingURL=stylesheet.css.map */

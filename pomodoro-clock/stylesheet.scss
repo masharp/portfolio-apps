@@ -6,53 +6,56 @@ html, body {
   vertical-align: baseline;
   text-align: center;
   font-weight: bold;
-  font-size: 20px; }
-  @media (max-width: 650px) {
-    html, body {
-      font-size: 16px; } }
-  @media (min-width: 650px) and (max-width: 800px) {
-    html, body {
-      font-size: 18px; } }
+  font-size: 20px;
 
+  @media (max-width: 650px) {
+    font-size: 16px
+  }
+  @media (min-width: 650px) and (max-width: 800px) {
+    font-size: 18px;
+  }
+}
 h2 {
   font-size: 4em;
   line-height: 1.45;
-  text-shadow: 1px 1px 1px #000; }
+  text-shadow: 1px 1px 1px #000;
+
   @media (max-width: 650px) {
-    h2 {
-      font-size: 2.5em; } }
+    font-size: 2.5em;
+  }
+}
 
 #selectors {
   text-align: center;
   margin: 0 auto;
   justify-content: center;
   display: flex;
-  padding: .8em; }
-
+  padding: .8em;
+}
 #selectors #session-selector, #selectors #break-selector {
   display: inline;
   padding-left: 1.2em;
-  padding-right: 1.2em; }
-
+  padding-right: 1.2em;
+}
 #selectors button {
   background-color: #86DBFF;
   color: #B32889;
   border: 0;
   outline: none;
-  cursor: pointer; }
-
+  cursor: pointer;
+}
 #selectors button:hover {
   background-color: #fff;
-  color: #B32889; }
-
+  color: #B32889;
+}
 #selectors .num-time {
   padding-left: .4em;
-  padding-right: .4em; }
-
-#stopwatch-area span {
+  padding-right: .4em;
+}
+#stopwatch-area  span {
   cursor: pointer;
-  font-size: 1.5em; }
-
+  font-size: 1.5em;
+}
 #stopwatch {
   border: 5px solid #B32889;
   width: 14em;
@@ -61,18 +64,18 @@ h2 {
   text-align: center;
   position: relative;
   overflow: hidden;
-  margin: 0 auto; }
-
+  margin: 0 auto;
+}
 #stopwatch-title {
   padding-top: 1.9em;
-  font-size: 2em; }
-  @media (max-width: 650px) {
-    #stopwatch-title {
-      padding-top: 1.7em; } }
+  font-size: 2em;
 
+  @media (max-width: 650px) {
+    padding-top: 1.7em;
+  }
+}
 #stopwatch-time {
   font-size: 3em;
   text-shadow: 1px 1px 1px #000;
-  padding-bottom: 1em; }
-
-/*# sourceMappingURL=stylesheet.css.map */
+  padding-bottom: 1em;
+}

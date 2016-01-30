@@ -7,6 +7,12 @@ body {
   width: 100%; }
   #top h1 {
     text-align: center; }
+    @media (max-width: 650px) {
+      #top h1 {
+        font-size: 17px; } }
+  @media (max-width: 650px) {
+    #top h3 {
+      font-size: 12px; } }
 
 .content {
   text-align: center; }
@@ -15,13 +21,24 @@ body {
     margin: 15px;
     font-size: 15px;
     background-color: white; }
+    @media (max-width: 650px) {
+      .content table {
+        margin: 3px;
+        font-size: 12px; } }
   .content td, .content th {
     border: 2px solid #663300;
     padding: 1.8rem;
     padding-left: 1rem; }
+    @media (max-width: 650px) {
+      .content td, .content th {
+        padding: .5rem;
+        padding-left: .5rem; } }
   .content th {
     font-size: 20px;
     text-align: center; }
+    @media (max-width: 650px) {
+      .content th {
+        font-size: 11px; } }
   .content td {
     color: #663300; }
   .content .rank {
@@ -43,6 +60,9 @@ body {
   text-align: center;
   padding-top: 20px;
   color: #663300; }
+  @media (max-width: 650px) {
+    .footer {
+      padding-top: 10px; } }
   .footer a {
     color: white;
     text-decoration: none; }

@@ -2,6 +2,9 @@ body {
   background-color: #A0522D;
   font-family: "Lato", Helvetica, sans-serif;
   font-size: 40px; }
+  @media (max-width: 650px) {
+    body {
+      font-size: 30px; } }
 
 #header h2 {
   text-align: center;
@@ -18,10 +21,15 @@ body {
     color: #fff;
     display: block;
     float: left;
-    width: 300px;
-    height: 100px;
+    width: 10em;
+    height: 7.5em;
     margin: 5px;
     padding: 5px; }
+    @media (max-width: 650px) {
+      #stories li {
+        width: 9em;
+        height: 9em;
+        margin: 3px; } }
     #stories li p {
       padding-top: 10px;
       font-size: .7em; }

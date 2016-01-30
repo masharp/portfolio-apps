@@ -8,6 +8,13 @@ body {
   background-color: $primary-color;
   font-family: $font;
   font-size: 40px;
+
+  @media (max-width: 650px) {
+    font-size: 30px;
+  }
+  @media (min-width: 650px) and (max-width: 800px) {
+    font-size: 35px;
+  }
 }
 #main {
   padding-top: 1em;
@@ -17,19 +24,19 @@ body {
     color: $secondary-color;
   }
   #spacer {
-    padding-top: 200px;
+    padding-top: 5em;
   }
 }
 #search {
-  padding-top: 15px;
-  padding-bottom: 5px;
+  padding-top: .4em;
+  padding-bottom: .2em;
 
   input {
     font-size: .8em;
-    padding-left: 15px;
-    padding-right: 15px;
-    border-radius: 50px;
-    border: 5px solid $secondary-color;
+    padding-left: .4em;
+    padding-right: .4em;
+    border-radius: 1.2em;
+    border: .2em solid $secondary-color;
 
     &:focus {
       outline: none;
@@ -69,5 +76,12 @@ body {
   p {
     font-size: .5em;
     color: $tertiary-color;
+
+    @media (max-width: 650px) {
+      font-size: .2em;
+    }
+    @media (min-width: 650px) and (max-width: 800px) {
+      font-size: .4em;
+    }
   }
 }

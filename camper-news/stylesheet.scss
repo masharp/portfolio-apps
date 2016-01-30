@@ -8,6 +8,10 @@ body {
   background-color: $primary-color;
   font-family: $font;
   font-size: 40px;
+
+  @media (max-width: 650px) {
+    font-size: 30px;
+  }
 }
 #header {
   h2 {
@@ -28,10 +32,16 @@ body {
     color: $tertiary-color;
     display: block;
     float: left;
-    width: 300px;
-    height: 100px;
+    width: 10em;
+    height: 7.5em;
     margin: 5px;
     padding: 5px;
+
+    @media (max-width: 650px) {
+      width: 9em;
+      height: 9em;
+      margin: 3px;
+    }
 
     p {
       padding-top: 10px;

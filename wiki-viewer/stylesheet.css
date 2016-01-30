@@ -2,6 +2,12 @@ body {
   background-color: #fff;
   font-family: "Lato", Helvetica, sans-serif;
   font-size: 40px; }
+  @media (max-width: 650px) {
+    body {
+      font-size: 30px; } }
+  @media (min-width: 650px) and (max-width: 800px) {
+    body {
+      font-size: 35px; } }
 
 #main {
   padding-top: 1em;
@@ -9,17 +15,17 @@ body {
   #main .header {
     color: #51B0D9; }
   #main #spacer {
-    padding-top: 200px; }
+    padding-top: 5em; }
 
 #search {
-  padding-top: 15px;
-  padding-bottom: 5px; }
+  padding-top: .4em;
+  padding-bottom: .2em; }
   #search input {
     font-size: .8em;
-    padding-left: 15px;
-    padding-right: 15px;
-    border-radius: 50px;
-    border: 5px solid #51B0D9; }
+    padding-left: .4em;
+    padding-right: .4em;
+    border-radius: 1.2em;
+    border: 0.2em solid #51B0D9; }
     #search input:focus {
       outline: none; }
   #search i {
@@ -46,5 +52,11 @@ body {
 #articles p {
   font-size: .5em;
   color: #000; }
+  @media (max-width: 650px) {
+    #articles p {
+      font-size: .2em; } }
+  @media (min-width: 650px) and (max-width: 800px) {
+    #articles p {
+      font-size: .4em; } }
 
 /*# sourceMappingURL=stylesheet.css.map */

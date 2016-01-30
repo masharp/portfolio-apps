@@ -56,4 +56,4 @@ var MarkdownPreviewer = React.createClass({
   }
 });
 
-ReactDOM.render(React.createElement(MarkdownEditor, null), document.getElementById("main"));
+ReactDOM.render(React.createElement(MarkdownPreviewer, null), document.getElementById("main"));
