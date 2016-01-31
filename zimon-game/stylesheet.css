@@ -43,8 +43,16 @@ body {
     width: 250px;
     height: 150px;
     margin: 15px; }
+    @media (max-width: 650px) {
+      #game .tile {
+        width: 175px;
+        height: 100px;
+        margin: 5px; } }
   #game .row {
     padding-top: 20px; }
+    @media (max-width: 650px) {
+      #game .row {
+        padding-top: 0; } }
   #game #tile1 {
     background-color: blue; }
     #game #tile1:hover {
@@ -67,21 +75,41 @@ body {
   margin: 0 auto;
   vertical-align: middle;
   text-align: center; }
+  @media (max-width: 650px) {
+    #controller {
+      padding-top: 5px; } }
+  @media (min-width: 650px) and (max-width: 800px) {
+    #controller {
+      padding-top: 15px; } }
   #controller label {
     font-size: 20px;
     margin-right: 10px;
     margin-left: 10px; }
+    @media (max-width: 650px) {
+      #controller label {
+        font-size: 18px; } }
   #controller input {
     text-align: right;
     font-size: 30px;
     width: 10%;
     padding-right: 5px; }
+    @media (max-width: 650px) {
+      #controller input {
+        font-size: 22px; } }
   #controller i {
     margin-top: 10px;
     padding: 10px 20px 10px 20px;
     font-size: 30px; }
     #controller i:hover {
       background-color: #60FF90; }
+    @media (max-width: 650px) {
+      #controller i {
+        margin-top: 5px;
+        font-size: 22px;
+        padding: 8px 18px 8px 18px; } }
+    @media (min-width: 650px) and (max-width: 800px) {
+      #controller i {
+        margin-top: 5px; } }
   #controller #start {
     color: blue; }
   #controller #reset {

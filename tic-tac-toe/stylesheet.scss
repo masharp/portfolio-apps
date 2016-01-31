@@ -23,9 +23,19 @@ body {
     background-color: white;
     text-align: center;
     margin: 15% auto;
-    height: 200px;
+    height: 5em;
     width: 40%;
     padding-top: 10px;
+
+    @media (max-width: 650px) {
+      height: 7em;
+      width: 75%;
+      font-size: .8em;
+    }
+    @media (min-width: 650px) and (max-width: 800px) {
+      height: 5.7em;
+      width: 50%;
+    }
 
     p {
       font-size: .6em;
@@ -34,6 +44,11 @@ body {
       border-radius: 10px;
       font-size: 1em;
       width: 100px;
+
+      @media (max-width: 650px) {
+        width: 75px;
+        font-size: 1.5em;
+      }
     }
   }
   #xSelect {
@@ -87,9 +102,26 @@ body {
     margin-right: 10px;
     border-radius: 10px;
 
+    @media (max-width: 650px) {
+      height: 7em;
+      width: 27%;
+      margin-top: 3px;
+      margin-right: 3px;
+    }
+    @media (min-width: 650px) and (max-width: 800px) {
+      height: 11em;
+    }
+
     i {
       font-size: 10em;
       color: #000 !important;
+
+      @media (max-width: 650px) {
+        font-size: 5em;
+      }
+      @media (min-width: 650px) and (max-width: 800px) {
+        font-size: 9em;
+      }
     }
   }
 }

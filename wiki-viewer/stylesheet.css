@@ -16,6 +16,9 @@ body {
     color: #51B0D9; }
   #main #spacer {
     padding-top: 5em; }
+    @media (max-width: 650px) {
+      #main #spacer {
+        padding-top: 3em; } }
 
 #search {
   padding-top: .4em;
@@ -26,10 +29,16 @@ body {
     padding-right: .4em;
     border-radius: 1.2em;
     border: 0.2em solid #51B0D9; }
+    @media (max-width: 650px) {
+      #search input {
+        font-size: .7em; } }
     #search input:focus {
       outline: none; }
   #search i {
     color: #51B0D9; }
+    @media (max-width: 650px) {
+      #search i {
+        font-size: .7em; } }
     #search i:hover {
       cursor: pointer; }
 
@@ -49,12 +58,15 @@ body {
   text-decoration: underline !important;
   font-size: .8em;
   color: #000; }
+  @media (max-width: 650px) {
+    #articles h2 {
+      font-size: .7em; } }
 #articles p {
   font-size: .5em;
   color: #000; }
   @media (max-width: 650px) {
     #articles p {
-      font-size: .2em; } }
+      font-size: .5em; } }
   @media (min-width: 650px) and (max-width: 800px) {
     #articles p {
       font-size: .4em; } }

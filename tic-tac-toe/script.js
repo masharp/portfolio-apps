@@ -343,7 +343,7 @@ $(document).ready(function() {
   function testMove(boardState, move, player) {
     var testBoard = copyBoard(boardState);
 
-    if(testBoard[move] == 0) {
+    if(testBoard[move] === 0) {
       testBoard[move] = player;
       return testBoard;
     } else {
@@ -361,8 +361,8 @@ $(document).ready(function() {
   */
   function testWinner(board, player) {
     //capture the value needed for a victory
-    var winSum = (player == 2) ? 6 : 15;
-    var tie = (player == 0) ? true : false;
+    var winSum = (player === 2) ? 6 : 15;
+    var tie = (player === 0) ? true : false;
     var testBoard = copyBoard(board);
 
     //win conditions
@@ -377,7 +377,7 @@ $(document).ready(function() {
 
     if(tie) { //test for a tie if tie is true
       for (var i = 0; i < board.length; i++) {
-        if (board[i] == 0) {
+        if (board[i] === 0) {
           return false;
         }
       }

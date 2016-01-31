@@ -25,6 +25,10 @@ body {
   }
   #spacer {
     padding-top: 5em;
+
+    @media (max-width: 650px) {
+      padding-top: 3em;
+    }
   }
 }
 #search {
@@ -38,12 +42,20 @@ body {
     border-radius: 1.2em;
     border: .2em solid $secondary-color;
 
+    @media (max-width: 650px) {
+      font-size: .7em;
+    }
+
     &:focus {
       outline: none;
     }
   }
   i {
     color: $secondary-color;
+
+    @media (max-width: 650px) {
+      font-size: .7em;
+    }
 
     &:hover {
       cursor: pointer;
@@ -55,7 +67,6 @@ body {
   color: $tertiary-color;
 }
 #articles {
-
   li {
     list-style: none;
     border: 1px solid $tertiary-color;
@@ -72,13 +83,17 @@ body {
     text-decoration: underline !important;
     font-size: .8em;
     color: $tertiary-color;
+
+    @media (max-width: 650px) {
+      font-size: .7em;
+    }
   }
   p {
     font-size: .5em;
     color: $tertiary-color;
 
     @media (max-width: 650px) {
-      font-size: .2em;
+      font-size: .5em;
     }
     @media (min-width: 650px) and (max-width: 800px) {
       font-size: .4em;

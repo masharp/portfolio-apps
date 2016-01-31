@@ -9,7 +9,7 @@
 
   TODO: fix a few bugs with scoring
 
-    - by Michael Sharp 2015
+    - by Michael Sharp 2016
     www.softwareontheshore.com
 */
 
@@ -85,7 +85,7 @@ var simon = {
         otherwise, triggers a new computer turn. if tile does not match, immediately ends the game.
    */
   playerTurn: function playerTurn(tile) {
-    if(simon.playerMode = true && (simon.playerMoves <= simon.round)) {
+    if(simon.playerMode === true && (simon.playerMoves <= simon.round)) {
       var playerPattern = [];
       playerPattern.push(tile);
 
@@ -145,20 +145,20 @@ var simon = {
       //switch to figure which audio element to play based on tile number
       switch(pattern[count]) {
         case 1:
-          var audio = new Audio(simon.audio[0]);
-          audio.play();
+          var audio1 = new Audio(simon.audio[0]);
+          audio1.play();
           break;
         case 2:
-          var audio = new Audio(simon.audio[1]);
-          audio.play();
+          var audio2 = new Audio(simon.audio[1]);
+          audio2.play();
           break;
         case 3:
-          var audio = new Audio(simon.audio[2]);
-          audio.play();
+          var audio3 = new Audio(simon.audio[2]);
+          audio3.play();
           break;
         case 4:
-          var audio = new Audio(simon.audio[3]);
-          audio.play();
+          var audio4 = new Audio(simon.audio[3]);
+          audio4.play();
           break;
         default:
           var audio = new Audio(simon.audio[0]);
@@ -166,7 +166,7 @@ var simon = {
           break;
       }
       window.setTimeout(function() {
-        tile.css({"opacity": ""}) //remove property with jQuery (empty string)
+        tile.css({"opacity": ""}); //remove property with jQuery (empty string)
       }, 300);
 
       count++;
@@ -179,8 +179,8 @@ var simon = {
         }
       }
     }, tempo);
-  },
-}
+  }
+};
 /*
   ---------------------
   jQuery Shake Function
@@ -195,7 +195,7 @@ jQuery.fn.shake = function() {
         }
     });
     return this;
-}
+};
 /*
   ------------------------------
   jQuery Document-Ready Function
@@ -211,7 +211,7 @@ $(document).ready(function() {
   });
   $("#restart").click(function() {
     simon.resetGame();
-  })
+  });
   $("#start").click(function() {
     simon.init();
   });
