@@ -1,0 +1,49 @@
+body, html {
+  font-size: 20px;
+}
+#top {
+  width: 100%;
+  text-align: center;
+}
+#main {
+  width: 100%;
+
+  #content {
+    text-align: center;
+
+    #buttons {
+      display: inline-block;
+
+      #restart-btn {
+        background-color: lighten(gray, 30);
+        color: black;
+
+        &:hover {
+          background-color: white;
+        }
+      }
+    }
+    #control-panel {
+      display: inline-block;
+      font-size: .9em;
+      margin-bottom: 1.5em;
+
+      .display-label, .tracking-label {
+        background-color: white;
+        color: gray;
+      }
+
+      .display-label {
+        margin-left: .25em;
+        font-weight: bolder;
+        font-size: 1em;
+      }
+    }
+  }
+}
+
+.footer {
+  text-align: center;
+  margin-top: 10em;
+  font-size: .6em;
+}

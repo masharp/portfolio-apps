@@ -1,0 +1,36 @@
+body, html {
+  font-size: 20px; }
+
+#top {
+  width: 100%;
+  text-align: center; }
+
+#main {
+  width: 100%; }
+  #main #content {
+    text-align: center; }
+    #main #content #buttons {
+      display: inline-block; }
+      #main #content #buttons #restart-btn {
+        background-color: #cdcdcd;
+        color: black; }
+        #main #content #buttons #restart-btn:hover {
+          background-color: white; }
+    #main #content #control-panel {
+      display: inline-block;
+      font-size: .9em;
+      margin-bottom: 1.5em; }
+      #main #content #control-panel .display-label, #main #content #control-panel .tracking-label {
+        background-color: white;
+        color: gray; }
+      #main #content #control-panel .display-label {
+        margin-left: .25em;
+        font-weight: bolder;
+        font-size: 1em; }
+
+.footer {
+  text-align: center;
+  margin-top: 10em;
+  font-size: .6em; }
+
+/*# sourceMappingURL=style.css.map */
