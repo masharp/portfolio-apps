@@ -22,3 +22,7 @@ A React-driven app that creates [Conway's cellular automaton](https://en.wikiped
 ### Jan. 26, 2016
   * Debugged neighbours and rules algorithms - functionality now working well
   * Added color to page styling
+
+### Feb. 03, 2016
+  * Mobile styling fixes
+  * Switched jQuery for vanilla DOM selectors to improve performance

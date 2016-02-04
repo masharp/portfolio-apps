@@ -1,10 +1,10 @@
 /* Conway's Game of Life
     - A React-driven app that creates Conway's cellular automaton based on an initial state.
+      Uses vanilla Javascript to select elements, in order to increase performance.
       https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life. A FreeCodeCamp project.
 
       RULES
       -----
-
       - Any live cell with fewer than two live neighbours dies, as if caused by under-population.
       - Any live cell with two or three live neighbours lives on to the next generation.
       - Any live cell with more than three live neighbours dies, as if by over-population.
@@ -12,8 +12,6 @@
 
       by Michael A Sharp
       www.softwareontheshore.com
-
-      TODO: FIX RESPONSIVENESS ACROSS SCREEN SIZES
 */
 
 /*jshint esnext: true */
@@ -124,14 +122,16 @@
 
     /*
     ---- CLEAR FUNCTION -----
-        -resets the board via jQuery
+        -resets the board via vanilla JavaScript Web API.
     */
     clear: function clear() {
       this.stop();
-      this.setState({ time: 0}, function clearBoard() {
-        $(".tile").each(function(tile) {
-          $(this).removeClass("alive old dead");
-          $(this).addClass("dead");
+      this.setState({ time: 0 }, function clearBoard() {
+        let elements =  [].slice.call(document.getElementsByClassName("tile"));
+        elements.forEach(function(tile) {
+          tile.classList.remove("alive");
+          tile.classList.remove("old");
+          tile.classList.add("dead");
         });
       });
     },
@@ -142,14 +142,15 @@
         - allows the user to turn the tile on
     */
     changeTile: function changeTile(event) {
-      let target = $("#" + event.target.id);
+      let target = document.getElementById(event.target.id);
 
-      if(target.hasClass("alive")) {
-        target.removeClass("alive dead old");
-        target.addClass("dead");
-      } else if (target.hasClass("dead")) {
-        target.removeClass("alive dead old");
-        target.addClass("alive");
+      if(target.classList.contains("alive") || target.classList.contains("old")) {
+        target.classList.remove("alive");
+        target.classList.remove("old");
+        target.classList.add("dead");
+      } else if (target.classList.contains("dead")) {
+        target.classList.remove("dead");
+        target.classList.add("alive");
       }
     },
 
@@ -176,13 +177,14 @@
       //check each tile for status and neighbours
       tiles.forEach(function checkTile(tile){
         let tileID = tile.props.id;
+        let tileElement = document.getElementById(tileID);
         let tileY = Number(tileID.split("-")[0]);
         let tileX = Number(tileID.split("-")[1]);
         let neighboursAlive = 0;
         let tileAlive = false;
 
         //check target tile status and track living tiles
-        if($("#" + tileID).hasClass("alive") || $("#" + tileID).hasClass("old")) {
+        if(tileElement.classList.contains("alive") || tileElement.classList.contains("old")) {
           tileAlive = true;
           boardLife++;
         }
@@ -192,7 +194,9 @@
 
         //check how many of these neighbours are alive
         tileNeighbours.forEach(function checkNeighbourStatus(tile) {
-          if($("#" + tile).hasClass("alive") || $("#" + tile).hasClass("old")) {
+          let targetTile = document.getElementById(tile);
+
+          if(targetTile.classList.contains("alive") || targetTile.classList.contains("old")) {
             neighboursAlive++;
           }
         });
@@ -201,26 +205,29 @@
 
         //under-population
         if (tileAlive && neighboursAlive < 2) {
-          $("#" + tileID).removeClass("alive old dead");
-          $("#" + tileID).addClass("dead");
+          tileElement.classList.remove("alive");
+          tileElement.classList.remove("old");
+          tileElement.classList.add("dead");
         }
 
         //lives on
         else if (tileAlive && (neighboursAlive === 2 || neighboursAlive === 3)) {
-          $("#" + tileID).removeClass("alive old dead");
-          $("#" + tileID).addClass("old");
+          tileElement.classList.remove("alive");
+          tileElement.classList.remove("old");
+          tileElement.classList.add("old");
         }
 
         //over-population
         else if (tileAlive && neighboursAlive > 3) {
-          $("#" + tileID).removeClass("alive old dead");
-          $("#" + tileID).addClass("dead");
+          tileElement.classList.remove("alive");
+          tileElement.classList.remove("old");
+          tileElement.classList.add("dead");
         }
 
         //birth
         else if ((!tileAlive) && neighboursAlive === 3) {
-          $("#" + tileID).removeClass("alive old dead");
-          $("#" + tileID).addClass("alive");
+          tileElement.classList.remove("dead");
+          tileElement.classList.add("alive");
         }
       });
 
