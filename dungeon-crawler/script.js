@@ -21,6 +21,7 @@
 /*jshint esnext: true */
 
 (function() {
+  "use strict";
 
   /* React Bootstrap Components */
   const Button = ReactBootstrap.Button;
@@ -53,7 +54,10 @@
 
   var initialState = {
     player: {
-      health: 100,
+      baseHealth: 50,
+      baseDmg: 5,
+      health: 50,
+      dmg: function dmg() { return this.baseDmg + this.weapon.dmg; },
       level: 1,
       exp: 0,
       weapon: WEAPON_TYPES[0]
@@ -66,12 +70,6 @@
     lightsOn: false
   };
 
-  /* Redux Dispatch Function */
-  function newWeapon(weapon) {
-    dungeonStore.dispatch({ type: "NEW_WEAPON", weapon: weapon });
-  }
-
-
   /* Redux Reducer Function */
   const dungeonReducer = function(state, action) {
     if(state === undefined) state = initialState;
@@ -80,12 +78,40 @@
       case "NEW_WEAPON":
         state.player.weapon = WEAPON_TYPES[action.weapon];
         return state;
+      case "HEAL_PLAYER":
+        state.player.health = state.player.baseHealth;
+        return state;
+      case "DMG_PLAYER":
+        state.player.health = state.player.health - action.amount;
+        return state;
+      case "LEVEL_UP":
+        state.player.baseHealth = state.player.baseHealth + 50;
+        state.player.health = state.player.baseHealth;
+        state.player.baseDmg = state.player.baseDmg + 5;
+        state.player.level = state.player.level + 1;
+
+        return state;
       default:
         return state;
     }
 
     return state;
   };
+
+
+  /* Redux Dispatch Function */
+  function newWeapon(weapon) {
+    dungeonStore.dispatch({ type: "NEW_WEAPON", weapon: weapon });
+  }
+  function healPlayer() {
+    dungeonStore.dispatch({ type: "HEAL_PLAYER" });
+  }
+  function damagePlayer(dmg) {
+    dungeonStore.dispatch( { type: "DMG_PLAYER", amount: dmg });
+  }
+  function levelUp() {
+    dungeonStore.dispatch( { type: "LEVEL_UP" });
+  }
 
   /* Redux Store */
   var dungeonStore = Redux.createStore(dungeonReducer);
@@ -96,16 +122,22 @@
       getState: React.PropTypes.func.isRequired
     },
     getInitialState: function getInitialState() {
-      return this.props.getState(undefined);
+      return this.props.getState();
     },
     componentDidMount: function componentDidMount() {
+      let self = this;
 
+      dungeonStore.subscribe(function() {
+        let newState = self.props.getState();
+
+        self.setState(newState);
+      });
     },
     restart: function restart() {
-        return null;
+      return null;
     },
     light: function light() {
-      return null;
+      levelUp();
     },
     render: function render() {
       return(
@@ -125,7 +157,7 @@
             React.createElement(Label, { className: "display-label" }, "Weapon:"),
             React.createElement(Label, { className: "tracking-label" }, this.state.player.weapon.name),
             React.createElement(Label, { className: "display-label" }, "Attack:"),
-            React.createElement(Label, { className: "tracking-label" }, this.state.player.weapon.dmg)
+            React.createElement(Label, { className: "tracking-label" }, this.state.player.dmg())
           ),
           React.createElement(Dungeon, { map: this.state.dungeon })
         )
@@ -146,11 +178,13 @@
 
   ReactDOM.render(React.createElement(Game, { getState: dungeonStore.getState }), document.getElementById("main"));
 
-  dungeonStore.dispatch({ type: "NEW_WEAPON", weapon: 1});
-
+  /* Expect Assertion Tests
+  dungeonStore.dispatch({ type: "NEW_WEAPON", weapon: 1 });
   expect(
     dungeonStore.getState().player.weapon.id
   ).toEqual(1);
 
-  console.log("Tests pass!")
+  console.log("Tests pass!");
+
+  */
 }());
