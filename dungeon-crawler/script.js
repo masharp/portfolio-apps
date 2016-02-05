@@ -28,29 +28,75 @@
   const Label = ReactBootstrap.Label;
 
   /* Script Globals */
-
-  //user story: health, weapon, level
-  var player = {
-    health: 100,
-    level: 1,
-    exp: 0,
-    weapon: {
-      name: "club",
+  const WEAPON_TYPES = [
+    {
+      id: 0,
+      name: "Club",
       dmg: 5
+    },
+    {
+      id: 1,
+      name: "Dagger",
+      dmg: 7
+    },
+    {
+      id: 2,
+      name: "Axe",
+      dmg: 9
+    },
+    {
+      id: 3,
+      name: "Maul",
+      dmg: 11
     }
+  ];
+
+  var initialState = {
+    player: {
+      health: 100,
+      level: 1,
+      exp: 0,
+      weapon: WEAPON_TYPES[0]
+    },
+    dungeon: {
+      text: "Here is the dungeon!"
+    },
+    dungeonHeight: 50,
+    dungeonWidth: 70,
+    lightsOn: false
   };
 
-  var dungeon = {
-    text: "Here is the dungeon!"
+  /* Redux Dispatch Function */
+  function newWeapon(weapon) {
+    dungeonStore.dispatch({ type: "NEW_WEAPON", weapon: weapon });
+  }
+
+
+  /* Redux Reducer Function */
+  const dungeonReducer = function(state, action) {
+    if(state === undefined) state = initialState;
+
+    switch(action.type) {
+      case "NEW_WEAPON":
+        state.player.weapon = WEAPON_TYPES[action.weapon];
+        return state;
+      default:
+        return state;
+    }
+
+    return state;
   };
+
+  /* Redux Store */
+  var dungeonStore = Redux.createStore(dungeonReducer);
 
   /* React Components */
   const Game = React.createClass({ displayName: "Game",
     propTypes: {
-      player: React.PropTypes.object.isRequired
+      getState: React.PropTypes.func.isRequired
     },
     getInitialState: function getInitialState() {
-      return({});
+      return this.props.getState(undefined);
     },
     componentDidMount: function componentDidMount() {
 
@@ -71,17 +117,17 @@
           React.createElement("br",{}),
           React.createElement("div", { id: "control-panel" },
             React.createElement(Label, { className: "display-label" }, "Health:"),
-            React.createElement(Label, { className: "tracking-label" }, this.props.player.health),
+            React.createElement(Label, { className: "tracking-label" }, this.state.player.health),
             React.createElement(Label, { className: "display-label" }, "Level:"),
-            React.createElement(Label, { className: "tracking-label" }, this.props.player.level),
+            React.createElement(Label, { className: "tracking-label" }, this.state.player.level),
             React.createElement(Label, { className: "display-label" }, "Experience:"),
-            React.createElement(Label, { className: "tracking-label" }, this.props.player.exp),
+            React.createElement(Label, { className: "tracking-label" }, this.state.player.exp),
             React.createElement(Label, { className: "display-label" }, "Weapon:"),
-            React.createElement(Label, { className: "tracking-label" }, this.props.player.weapon.name),
+            React.createElement(Label, { className: "tracking-label" }, this.state.player.weapon.name),
             React.createElement(Label, { className: "display-label" }, "Attack:"),
-            React.createElement(Label, { className: "tracking-label" }, this.props.player.weapon.dmg)
+            React.createElement(Label, { className: "tracking-label" }, this.state.player.weapon.dmg)
           ),
-          React.createElement(Dungeon, { map: dungeon })
+          React.createElement(Dungeon, { map: this.state.dungeon })
         )
       );
     }
@@ -98,5 +144,13 @@
     }
   });
 
-  ReactDOM.render(React.createElement(Game, { player: player }), document.getElementById("main"));
+  ReactDOM.render(React.createElement(Game, { getState: dungeonStore.getState }), document.getElementById("main"));
+
+  dungeonStore.dispatch({ type: "NEW_WEAPON", weapon: 1});
+
+  expect(
+    dungeonStore.getState().player.weapon.id
+  ).toEqual(1);
+
+  console.log("Tests pass!")
 }());
