@@ -52,6 +52,15 @@
     }
   ];
 
+  const DUNGEON_HEIGHT = 50;
+  const DUNGEON_WIDTH = 70;
+
+
+  var dungeonMapper = function dungeonMapper() {
+    let display = new ROT.Display({ width: DUNGEON_WIDTH, height: DUNGEON_HEIGHT });
+    return display.getContainer();
+  };
+
   var initialState = {
     player: {
       baseHealth: 50,
@@ -62,11 +71,9 @@
       exp: 0,
       weapon: WEAPON_TYPES[0]
     },
-    dungeon: {
-      text: "Here is the dungeon!"
-    },
-    dungeonHeight: 50,
-    dungeonWidth: 70,
+    dungeon: dungeonMapper(),
+    dungeonHeight: DUNGEON_HEIGHT,
+    dungeonWidth: DUNGEON_WIDTH,
     lightsOn: false
   };
 
@@ -98,20 +105,21 @@
     return state;
   };
 
-
   /* Redux Dispatch Function */
-  function newWeapon(weapon) {
-    dungeonStore.dispatch({ type: "NEW_WEAPON", weapon: weapon });
-  }
-  function healPlayer() {
-    dungeonStore.dispatch({ type: "HEAL_PLAYER" });
-  }
-  function damagePlayer(dmg) {
-    dungeonStore.dispatch( { type: "DMG_PLAYER", amount: dmg });
-  }
-  function levelUp() {
-    dungeonStore.dispatch( { type: "LEVEL_UP" });
-  }
+  const reduxDispatches = {
+    newWeapon: function newWeapon(weapon) {
+      dungeonStore.dispatch({ type: "NEW_WEAPON", weapon: weapon });
+    },
+    healPlayer: function healPlayer() {
+      dungeonStore.dispatch({ type: "HEAL_PLAYER" });
+    },
+    damagePlayer: function damagePlayer(dmg) {
+      dungeonStore.dispatch( { type: "DMG_PLAYER", amount: dmg });
+    },
+    levelUp: function levelUp() {
+      dungeonStore.dispatch( { type: "LEVEL_UP" });
+    }
+  };
 
   /* Redux Store */
   var dungeonStore = Redux.createStore(dungeonReducer);
@@ -119,11 +127,14 @@
   /* React Components */
   const Game = React.createClass({ displayName: "Game",
     propTypes: {
-      getState: React.PropTypes.func.isRequired
+      getState: React.PropTypes.func.isRequired,
+      dispatches: React.PropTypes.object.isRequired
     },
+    /* Initial state determined by calling the redux store */
     getInitialState: function getInitialState() {
       return this.props.getState();
     },
+    /* Upon document loading - subscribe to the store and update the react DOM */
     componentDidMount: function componentDidMount() {
       let self = this;
 
@@ -134,10 +145,10 @@
       });
     },
     restart: function restart() {
-      return null;
+
     },
     light: function light() {
-      levelUp();
+
     },
     render: function render() {
       return(
@@ -171,12 +182,14 @@
     },
     render: function render() {
       return(
-        React.createElement("div", { id: "dungeon" }, this.props.map.text)
+        React.createElement("div", { id: "dungeon" }, this.props.map)
       );
     }
   });
 
-  ReactDOM.render(React.createElement(Game, { getState: dungeonStore.getState }), document.getElementById("main"));
+  ReactDOM.render(React.createElement(
+      Game, { getState: dungeonStore.getState, dispatches: reduxDispatches }), document.getElementById("main")
+  );
 
   /* Expect Assertion Tests
   dungeonStore.dispatch({ type: "NEW_WEAPON", weapon: 1 });
