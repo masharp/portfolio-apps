@@ -52,13 +52,19 @@
     }
   ];
 
-  const DUNGEON_HEIGHT = 50;
-  const DUNGEON_WIDTH = 70;
-
+  const DUNGEON_HEIGHT = 30;
+  const DUNGEON_WIDTH = 80;
 
   var dungeonMapper = function dungeonMapper() {
-    let display = new ROT.Display({ width: DUNGEON_WIDTH, height: DUNGEON_HEIGHT });
-    return display.getContainer();
+    let map = new ROT.Map.Rogue(DUNGEON_WIDTH, DUNGEON_HEIGHT);
+    let display = new ROT.Display({ width: DUNGEON_WIDTH, height: DUNGEON_HEIGHT, fontSize: 16 });
+    let container = display.getContainer();
+
+    map.create(function(x, y, wall) {
+      display.draw(x, y, wall ? "|" : "");
+    });
+
+    return container;
   };
 
   var initialState = {
@@ -180,9 +186,12 @@
     propTypes: {
       map: React.PropTypes.object.isRequired
     },
+    componentDidMount: function componentDidMount() {
+      ReactDOM.findDOMNode(this).appendChild(this.props.map);
+    },
     render: function render() {
       return(
-        React.createElement("div", { id: "dungeon" }, this.props.map)
+        React.createElement("div", { id: "dungeon" })
       );
     }
   });
