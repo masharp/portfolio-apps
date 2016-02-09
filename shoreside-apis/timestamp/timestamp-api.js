@@ -75,5 +75,6 @@ router.get("/shoreside-timestamp/:timestamp", function(request, response, next) 
     };
   }
 
+  response.setHeader("Content-Type", "application/json");
   response.json(timestamp.output);
 });
