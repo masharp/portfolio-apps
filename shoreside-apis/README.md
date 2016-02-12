@@ -11,3 +11,7 @@
   * (Shoreside MyInfo Microservice)[https://www.softwareontheshore.com/apis/myinfo]
     * This is a web API project that parses the request header for the ip address, language,
       and browser operating system and then returns them as a JSON object. FreeCodeCamp project.
+
+  * (Shortside URL Shortener Microservice)[https://www.softwareontheshore.com/apis/urlshort]
+    * This web API accepts a parameter in the GET request consisting of a valid URL (http://etc)
+      or an invalid URL with the query 'allow=true'. Using the shortened url will redirect to the original. 
