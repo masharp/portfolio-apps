@@ -163,7 +163,7 @@
             React.createElement(Button, { id: "restart-btn", onClick: this.restart }, "Restart"),
             React.createElement(Button, { id: "lights-btn", onClick: this.light }, "Light Switch")
           ),
-          React.createElement("br",{}),
+          React.createElement("br", {}),
           React.createElement("div", { id: "control-panel" },
             React.createElement(Label, { className: "display-label" }, "Health:"),
             React.createElement(Label, { className: "tracking-label" }, this.state.player.health),

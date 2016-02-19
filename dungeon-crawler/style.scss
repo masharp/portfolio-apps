@@ -1,5 +1,6 @@
 body, html {
   font-size: 20px;
+  background-color: lighten(gray, 20);
 }
 #top {
   width: 100%;
@@ -26,7 +27,10 @@ body, html {
     #control-panel {
       display: inline-block;
       font-size: .9em;
-      margin-bottom: 1.5em;
+      padding: .5em;
+      margin-bottom: 1em;
+      border: .2em solid black;
+      background-color: white;
 
       .display-label, .tracking-label {
         background-color: white;
@@ -44,6 +48,6 @@ body, html {
 
 .footer {
   text-align: center;
-  margin-top: 10em;
+  margin-top: 1em;
   font-size: .6em;
 }
