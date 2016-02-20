@@ -85,13 +85,14 @@
   const DUNGEON_WIDTH = 80;
 
   var mapDungeon = function mapDungeon() {
+    ROT.RNG.setSeed(1234);
     ROT.DEFAULT_WIDTH = DUNGEON_WIDTH;
     ROT.DEFAULT_HEIGHT = DUNGEON_HEIGHT;
 
-    let display = new ROT.Display({ fontSize: 12 });
+    let display = new ROT.Display({ fontSize: 10, bg: "black", fg: "black" });
     let container = display.getContainer();
 
-    let map = new ROT.Map.Rogue();
+    let map = new ROT.Map.Digger();
     let data = {};
 
     map.create(function(x, y, type) {
@@ -99,15 +100,22 @@
       display.DEBUG(x, y, type);
     });
 
+    //find the starting position of the player
+    let rooms = map.getRooms();
+    let startX = rooms[0]._x1 + 1;
+    let startY = rooms[0]._y1 + 1;
+
+    //calculate the field of view from the player's current position
     let fieldOfView = new ROT.FOV.PreciseShadowcasting(function(x, y) {
       let key = x + "," + y;
       if(key in data) { return (data[key] === 0); }
       return false;
     });
 
-    fieldOfView.compute(0, 0, 10, function(x, y, r, visibility) {
-      let ch = (r ? "" : "?");
-      let color = (data[x + "," + y] ? "white" : "black");
+    //draw the field of view based on the current position
+    fieldOfView.compute(startX, startY, 6, function(x, y, r, visibility) {
+      let ch = (r ? "" : "@");
+      let color = (data[x + "," + y] ? "black" : "white");
 
       display.draw(x, y, ch, "#000", color);
     });
