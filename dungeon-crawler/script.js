@@ -29,44 +29,107 @@
   const Label = ReactBootstrap.Label;
 
   /* Script Globals */
-  const WEAPON_TYPES = [
-    {
-      id: 0,
+  const WEAPON_TYPES = {
+    "Club": {
       name: "Club",
-      dmg: 5
+      id: 0,
+      dmg: 10
     },
-    {
-      id: 1,
+    "Dagger": {
       name: "Dagger",
-      dmg: 7
+      id: 1,
+      dmg: 15
     },
-    {
-      id: 2,
+    "Axe": {
       name: "Axe",
-      dmg: 9
+      id: 2,
+      dmg: 20
     },
-    {
-      id: 3,
+    "Maul": {
       name: "Maul",
-      dmg: 11
+      id: 3,
+      dmg: 30
     }
-  ];
+  };
+
+  const MONSTER_TYPES = {
+    "Weight": {
+      "Big Boss": 1,
+      "Orc": 2,
+      "Goblin": 3,
+      "Creetin": 4
+    },
+    "Big Boss": {
+      id: 0,
+      health: 75,
+      dmg: 20
+    },
+    "Orc": {
+      id: 1,
+      health: 25,
+      dmg: 15
+    },
+    "Goblin": {
+      id: 2,
+      health: 20,
+      dmg: 10
+    },
+    "Creetin": {
+      id: 3,
+      health: 15,
+      dmg: 5
+    }
+  };
 
   const DUNGEON_HEIGHT = 30;
   const DUNGEON_WIDTH = 80;
 
-  var dungeonMapper = function dungeonMapper() {
-    let map = new ROT.Map.Rogue(DUNGEON_WIDTH, DUNGEON_HEIGHT);
-    let display = new ROT.Display({ width: DUNGEON_WIDTH, height: DUNGEON_HEIGHT, fontSize: 16 });
+  var mapDungeon = function mapDungeon() {
+    ROT.DEFAULT_WIDTH = DUNGEON_WIDTH;
+    ROT.DEFAULT_HEIGHT = DUNGEON_HEIGHT;
+
+    let display = new ROT.Display({ fontSize: 12 });
     let container = display.getContainer();
 
-    map.create(function(x, y, wall) {
-      display.draw(x, y, wall ? "|" : "");
+    let map = new ROT.Map.Rogue();
+    let data = {};
+
+    map.create(function(x, y, type) {
+      data[x + "," + y] = type;
+      display.DEBUG(x, y, type);
+    });
+
+    let fieldOfView = new ROT.FOV.PreciseShadowcasting(function(x, y) {
+      let key = x + "," + y;
+      if(key in data) { return (data[key] === 0); }
+      return false;
+    });
+
+    fieldOfView.compute(0, 0, 10, function(x, y, r, visibility) {
+      let ch = (r ? "" : "?");
+      let color = (data[x + "," + y] ? "white" : "black");
+
+      display.draw(x, y, ch, "#000", color);
     });
 
     return container;
   };
 
+  var populateMap =  function populateMap() {
+    let monsters = [];
+    let weightedMonsters = [];
+
+    for(let i = 0; i < 10; i++) {
+      let monster = ROT.RNG.getWeightedValue(MONSTER_TYPES.Weight);
+      weightedMonsters.push(monster);
+    }
+
+    weightedMonsters.forEach(function(monster) {
+      monsters.push(MONSTER_TYPES[monster]);
+    });
+
+    return monsters;
+  };
   var initialState = {
     player: {
       baseHealth: 50,
@@ -75,9 +138,10 @@
       dmg: function dmg() { return this.baseDmg + this.weapon.dmg; },
       level: 1,
       exp: 0,
-      weapon: WEAPON_TYPES[0]
+      weapon: WEAPON_TYPES.Club
     },
-    dungeon: dungeonMapper(),
+    monsters: populateMap(),
+    dungeon: mapDungeon(),
     dungeonHeight: DUNGEON_HEIGHT,
     dungeonWidth: DUNGEON_WIDTH,
     lightsOn: false
@@ -149,12 +213,28 @@
 
         self.setState(newState);
       });
+
+      window.addEventListener("keyup", this.handleKeyInput);
     },
     restart: function restart() {
 
     },
     light: function light() {
 
+    },
+    handleKeyInput: function handleKeyInput(event) {
+      event.preventDefault();
+
+      switch(event.keyCode) {
+        case 87: //W
+          break;
+        case 83: //S
+          break;
+        case 65: //A
+          break;
+        case 68: //D
+          break;
+      }
     },
     render: function render() {
       return(
@@ -176,7 +256,8 @@
             React.createElement(Label, { className: "display-label" }, "Attack:"),
             React.createElement(Label, { className: "tracking-label" }, this.state.player.dmg())
           ),
-          React.createElement(Dungeon, { map: this.state.dungeon })
+          React.createElement(Dungeon, { map: this.state.dungeon }),
+          React.createElement("p", { id: "control-desc" }, "W, A, S, D to Move")
         )
       );
     }
