@@ -3,19 +3,11 @@
       generated and the user can explore, fight enemies, and pick up items. Based on
       http://codepen.io/FreeCodeCamp/full/dGOOEJ/. This is a FreeCodeCamp project.
 
+      Heavy utilization of Ondřej Žára's ROT.js Roguelike Toolkit found at:
+      https://github.com/ondras/rot.js.
+
       2016 Michael Sharp
       www.softwareontheshore.com
-
-      USER STORIES:
-        - I have health, a level, and a weapon. I can pick up a better weapon. I can pick up health items.
-        - All the items and enemies on the map are arranged at random.
-        - I can move throughout a map, discovering items.
-        - I can move anywhere within the map's boundaries, but I can't move through an enemy until I've beaten it.
-        - Much of the map is hidden. When I take a step, all spaces that are within a certain number of spaces from me are revealed.
-        - When I beat an enemy, the enemy goes away and I get XP, which eventually increases my level.
-        - When I fight an enemy, we take turns damaging each other until one of us loses. I do damage based off of my level and my weapon. The enemy does damage based off of its level. Damage is somewhat random within a range.
-        - When I find and beat the boss, I win.
-        - The game should be challenging, but theoretically winnable.
 */
 
 /*jshint esnext: true */
@@ -52,6 +44,26 @@
     }
   };
 
+  const ITEM_TYPES = {
+    "Weight": {
+      "Mega Potion" : 1,
+      "Ultra Potion" : 2,
+      "Potion": 3
+    },
+    "Mega Potion" : {
+      id: 0,
+      health: 200
+    },
+    "Ultra Potion" : {
+      id: 1,
+      health: 100
+    },
+    "Potion" : {
+      id: 2,
+      health: 50
+    }
+  };
+
   const MONSTER_TYPES = {
     "Weight": {
       "Big Boss": 1,
@@ -84,8 +96,92 @@
   const DUNGEON_HEIGHT = 30;
   const DUNGEON_WIDTH = 80;
 
+  /* ----------------------------- */
+  /* ROT Game Object */
+  var Map = {
+    display: null,
+    container: null,
+    player: null,
+    engine: null,
+    items: null,
+    monsters: null,
+    weapons: null,
+    map: {},
+
+    init: function() {
+      ROT.DEFAULT_WIDTH = DUNGEON_WIDTH;
+      ROT.DEFAULT_HEIGHT = DUNGEON_HEIGHT;
+
+      this.display = new ROT.Display({ fontSize: 10, bg: "black", fg: "white", spacing: 1.1 });
+      this.container = this.display.getContainer();
+
+      this._generateMap();
+
+      //creates an ROT event scheduler to handle user input and future AI actions
+      let scheduler = new ROT.Scheduler.Simple();
+      scheduler.add(this.player, true);
+
+      //controls event flow
+      this.engine = new ROT.Engine(scheduler);
+      this.engine.start();
+    },
+    _generateMap: function() {
+      let digger = new ROT.Map.Digger();
+      let freeCells = [];
+
+      let diggerCallback = function(x, y, value) {
+        if(value) { return; }
+
+        let key = x + "," + y;
+        this.map[key] = ".";
+        freeCells.push(key);
+      };
+      digger.create(diggerCallback.bind(this));
+
+      this._generateItems(freeCells);
+      this._drawWholeMap();
+
+      this.player = this._createCreature(Player, freeCells);
+    },
+    _createCreature: function(type, freeCells) {
+
+    },
+    _generateItems: function(freeCells) {
+
+    },
+    _drawWholeMap: function() {
+      for(let key in this.map) {
+        let cords = key.split(",");
+        let x = parseInt(cords[0]);
+        let y = parseInt(cords[1]);
+        this.display.draw(x, y, this.map[key]);
+      }
+    }
+  };
+
+  /* ROT Player */
+  var Player = function(x, y) {
+    this._x = x;
+    this._y = y;
+    this._draw();
+  };
+
+  Player.prototype._draw = function() {
+
+  };
+  Player.prototype.act = function() {
+
+  };
+  Player.prototype.handleEvent = function(event) {
+
+  };
+  Player.prototype.interact = function() {
+
+  };
+
+
+
   var mapDungeon = function mapDungeon() {
-    ROT.RNG.setSeed(1234);
     ROT.DEFAULT_WIDTH = DUNGEON_WIDTH;
     ROT.DEFAULT_HEIGHT = DUNGEON_HEIGHT;
 
@@ -138,26 +234,27 @@
 
     return monsters;
   };
-  var initialState = {
-    player: {
-      baseHealth: 50,
-      baseDmg: 5,
-      health: 50,
-      dmg: function dmg() { return this.baseDmg + this.weapon.dmg; },
-      level: 1,
-      exp: 0,
-      weapon: WEAPON_TYPES.Club
-    },
-    monsters: populateMap(),
-    dungeon: mapDungeon(),
-    dungeonHeight: DUNGEON_HEIGHT,
-    dungeonWidth: DUNGEON_WIDTH,
-    lightsOn: false
-  };
 
   /* Redux Reducer Function */
   const dungeonReducer = function(state, action) {
-    if(state === undefined) state = initialState;
+    Map.init();
+
+    if(state === undefined) state = {
+      player: {
+        baseHealth: 50,
+        baseDmg: 5,
+        health: 50,
+        dmg: function dmg() { return this.baseDmg + this.weapon.dmg; },
+        level: 1,
+        exp: 0,
+        weapon: WEAPON_TYPES.Club
+      },
+      monsters: populateMap(),
+      dungeon: Map.container,
+      dungeonHeight: DUNGEON_HEIGHT,
+      dungeonWidth: DUNGEON_WIDTH,
+      lightsOn: false
+    };
 
     switch(action.type) {
       case "NEW_WEAPON":
@@ -222,27 +319,12 @@
         self.setState(newState);
       });
 
-      window.addEventListener("keyup", this.handleKeyInput);
     },
     restart: function restart() {
 
     },
     light: function light() {
 
-    },
-    handleKeyInput: function handleKeyInput(event) {
-      event.preventDefault();
-
-      switch(event.keyCode) {
-        case 87: //W
-          break;
-        case 83: //S
-          break;
-        case 65: //A
-          break;
-        case 68: //D
-          break;
-      }
     },
     render: function render() {
       return(
@@ -285,6 +367,7 @@
     }
   });
 
+  Map.init();
   ReactDOM.render(React.createElement(
       Game, { getState: dungeonStore.getState, dispatches: reduxDispatches }), document.getElementById("main")
   );
