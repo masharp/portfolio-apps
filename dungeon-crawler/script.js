@@ -8,6 +8,9 @@
 
       2016 Michael Sharp
       www.softwareontheshore.com
+
+      TODO: Add Monster 'Fights'
+      TODO: Add Lighting
 */
 
 /*jshint esnext: true */
@@ -21,49 +24,28 @@
   const Label = ReactBootstrap.Label;
 
   /* Script Globals */
-  const WEAPON_TYPES = {
-    "Club": {
+  const WEAPON_TYPES = [
+    {
       name: "Club",
       id: 0,
       dmg: 10
     },
-    "Dagger": {
+   {
       name: "Dagger",
       id: 1,
       dmg: 15
     },
-    "Axe": {
+    {
       name: "Axe",
       id: 2,
       dmg: 20
     },
-    "Maul": {
+    {
       name: "Maul",
       id: 3,
       dmg: 30
     }
-  };
-
-  const ITEM_TYPES = {
-    "Weight": {
-      "Mega Potion" : 1,
-      "Ultra Potion" : 2,
-      "Potion": 3
-    },
-    "Mega Potion" : {
-      id: 0,
-      health: 200
-    },
-    "Ultra Potion" : {
-      id: 1,
-      health: 100
-    },
-    "Potion" : {
-      id: 2,
-      health: 50
-    }
-  };
-
+  ];
   const MONSTER_TYPES = {
     "Weight": {
       "Big Boss": 1,
@@ -93,61 +75,88 @@
     }
   };
 
-  const DUNGEON_HEIGHT = 30;
-  const DUNGEON_WIDTH = 80;
-
   /* ----------------------------- */
   /* ROT Game Object */
   var Map = {
     display: null,
     container: null,
     player: null,
-    engine: null,
-    items: null,
     monsters: null,
-    weapons: null,
     map: {},
 
     init: function() {
-      ROT.DEFAULT_WIDTH = DUNGEON_WIDTH;
-      ROT.DEFAULT_HEIGHT = DUNGEON_HEIGHT;
-
-      this.display = new ROT.Display({ fontSize: 10, bg: "black", fg: "white", spacing: 1.1 });
+      this.display = new ROT.Display({ fontSize: 18, bg: "brown", fg: "black" });
       this.container = this.display.getContainer();
 
       this._generateMap();
-
-      //creates an ROT event scheduler to handle user input and future AI actions
-      let scheduler = new ROT.Scheduler.Simple();
-      scheduler.add(this.player, true);
-
-      //controls event flow
-      this.engine = new ROT.Engine(scheduler);
-      this.engine.start();
     },
     _generateMap: function() {
       let digger = new ROT.Map.Digger();
       let freeCells = [];
 
       let diggerCallback = function(x, y, value) {
+        this.display.DEBUG(x, y, value);
+
         if(value) { return; }
 
         let key = x + "," + y;
-        this.map[key] = ".";
+        this.map[key] = "";
         freeCells.push(key);
       };
       digger.create(diggerCallback.bind(this));
 
-      this._generateItems(freeCells);
+      this._generatePotions(freeCells);
+      this._generateWeapons(freeCells);
       this._drawWholeMap();
 
-      this.player = this._createCreature(Player, freeCells);
-    },
-    _createCreature: function(type, freeCells) {
 
+      this.player = this._generatePlayer(freeCells);
+      this.monsters = this._generateMonsters(freeCells);
     },
-    _generateItems: function(freeCells) {
+    _generatePlayer: function(freeCells) {
+      let index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
+      let key = freeCells.splice(index, 1)[0];
+      let coords = key.split(",");
+      let x = parseInt(coords[0]);
+      let y = parseInt(coords[1]);
 
+      return new Player(x, y);
+    },
+    _generateMonsters: function(freeCells) {
+      let monsters = [];
+      let monsterTypes = [];
+
+      for(let i = 0; i < 10; i++) {
+        let type = ROT.RNG.getWeightedValue(MONSTER_TYPES.Weight);
+        monsterTypes.push(MONSTER_TYPES[type]);
+      }
+
+      monsterTypes.forEach(function(type) {
+        let index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
+        let key = freeCells.splice(index, 1)[0];
+        let coords = key.split(",");
+        let x = parseInt(coords[0]);
+        let y = parseInt(coords[1]);
+        monsters.push(new Monster(x, y, type.id));
+      });
+
+      return monsters;
+    },
+    _generatePotions: function(freeCells) {
+      for(let i = 0; i < 7; i++) {
+        var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
+        var key = freeCells.splice(index, 1)[0];
+        this.map[key] = "*";
+      }
+    },
+    _generateWeapons: function(freeCells) {
+      WEAPON_TYPES.forEach(function(weapon) {
+        if(weapon.name === "Club") { return; }
+        let char = "" + weapon.name[0];
+        let index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
+        let key = freeCells.splice(index, 1)[0];
+        Map.map[key] = char;
+      });
     },
     _drawWholeMap: function() {
       for(let key in this.map) {
@@ -167,78 +176,111 @@
   };
 
   Player.prototype._draw = function() {
-
+    Map.display.draw(this._x, this._y, "@", "#ff0");
   };
-  Player.prototype.act = function() {
 
-  };
   Player.prototype.handleEvent = function(event) {
+    let code = event.keyCode;
 
-  };
-  Player.prototype.interact = function() {
+    /* Map keys to ROT directions (WDSA) */
+    let keyMap = {
+      87: 0,
+      68: 2,
+      83: 4,
+      65: 6
+    };
 
-  };
-
-
-
-  var mapDungeon = function mapDungeon() {
-    ROT.DEFAULT_WIDTH = DUNGEON_WIDTH;
-    ROT.DEFAULT_HEIGHT = DUNGEON_HEIGHT;
-
-    let display = new ROT.Display({ fontSize: 10, bg: "black", fg: "black" });
-    let container = display.getContainer();
-
-    let map = new ROT.Map.Digger();
-    let data = {};
-
-    map.create(function(x, y, type) {
-      data[x + "," + y] = type;
-      display.DEBUG(x, y, type);
-    });
-
-    //find the starting position of the player
-    let rooms = map.getRooms();
-    let startX = rooms[0]._x1 + 1;
-    let startY = rooms[0]._y1 + 1;
-
-    //calculate the field of view from the player's current position
-    let fieldOfView = new ROT.FOV.PreciseShadowcasting(function(x, y) {
-      let key = x + "," + y;
-      if(key in data) { return (data[key] === 0); }
-      return false;
-    });
-
-    //draw the field of view based on the current position
-    fieldOfView.compute(startX, startY, 6, function(x, y, r, visibility) {
-      let ch = (r ? "" : "@");
-      let color = (data[x + "," + y] ? "black" : "white");
-
-      display.draw(x, y, ch, "#000", color);
-    });
-
-    return container;
-  };
-
-  var populateMap =  function populateMap() {
-    let monsters = [];
-    let weightedMonsters = [];
-
-    for(let i = 0; i < 10; i++) {
-      let monster = ROT.RNG.getWeightedValue(MONSTER_TYPES.Weight);
-      weightedMonsters.push(monster);
+    //uses spacebar to attack or pick up items
+    if(code === 69) {
+      this._interact();
+      return;
     }
 
-    weightedMonsters.forEach(function(monster) {
-      monsters.push(MONSTER_TYPES[monster]);
-    });
+    //return if key pressed is not handled
+    if(!(code in keyMap)) { return; }
 
-    return monsters;
+    //check free spaces
+    let direction = ROT.DIRS[8][keyMap[code]];
+    let newX = this._x + direction[0];
+    let newY = this._y + direction[1];
+    let newKey = newX + "," + newY;
+
+    //return if cannot travel in that direct (wall)
+    if(!(newKey in Map.map)) { return; }
+
+    /* determine if the space is occupied by an enemy, if so register dmg
+      TODO: Add a dmg register and update store
+    */
+    if(Map.map[newKey] === "#" || Map.map[newKey] === "$" ||
+    Map.map[newKey] === "&" || Map.map[newKey] === "+") {
+
+
+    }
+
+    Map.display.draw(this._x, this._y, Map.map[this._x + "," + this._y]);
+    this._x = newX;
+    this._y = newY;
+    this._draw();
   };
 
+  /* Function for player interacting with items. results in a redix dispatch */
+  Player.prototype._interact = function() {
+    let key = this._x + "," + this._y;
+
+    switch(Map.map[key]) {
+      case "*":
+        reduxDispatches.healPlayer();
+        break;
+      case "D":
+        reduxDispatches.newWeapon(1);
+        break;
+      case "A":
+        reduxDispatches.newWeapon(2);
+        break;
+      case "M":
+        reduxDispatches.newWeapon(3);
+        break;
+    }
+  };
+
+  /* ROT Monster */
+  var Monster = function(x, y, type) {
+    this._x = x;
+    this._y = y;
+    this._type = type;
+    this._draw();
+  };
+
+  Monster.prototype._draw = function() {
+    let color = "";
+    let char = "";
+
+    switch(this._type) {
+      case 0:
+        color = "purple";
+        char = "$";
+        break;
+      case 1:
+        color = "white";
+        char = "#";
+        break;
+      case 2:
+        color = "orange";
+        char = "&";
+        break;
+      case 3:
+        color = "gray";
+        char = "+";
+        break;
+    }
+
+    Map.map[this._x + "," + this._y] = char;
+    Map.display.draw(this._x, this._y, char, color);
+  };
+
+/*----------------------------------*/
   /* Redux Reducer Function */
   const dungeonReducer = function(state, action) {
-    Map.init();
-
     if(state === undefined) state = {
       player: {
         baseHealth: 50,
@@ -247,12 +289,8 @@
         dmg: function dmg() { return this.baseDmg + this.weapon.dmg; },
         level: 1,
         exp: 0,
-        weapon: WEAPON_TYPES.Club
+        weapon: WEAPON_TYPES[0]
       },
-      monsters: populateMap(),
-      dungeon: Map.container,
-      dungeonHeight: DUNGEON_HEIGHT,
-      dungeonWidth: DUNGEON_WIDTH,
       lightsOn: false
     };
 
@@ -262,6 +300,12 @@
         return state;
       case "HEAL_PLAYER":
         state.player.health = state.player.baseHealth;
+        return state;
+      case "ADD_XP":
+        state.player.exp += 10;
+        if(state.player.exp > 30) {
+          reduxDispatches.levelUp();
+        }
         return state;
       case "DMG_PLAYER":
         state.player.health = state.player.health - action.amount;
@@ -288,6 +332,9 @@
     healPlayer: function healPlayer() {
       dungeonStore.dispatch({ type: "HEAL_PLAYER" });
     },
+    addXp: function addXp() {
+      dungeonStore.dispatch({ type: "ADD_XP" });
+    },
     damagePlayer: function damagePlayer(dmg) {
       dungeonStore.dispatch( { type: "DMG_PLAYER", amount: dmg });
     },
@@ -302,6 +349,7 @@
   /* React Components */
   const Game = React.createClass({ displayName: "Game",
     propTypes: {
+      map: React.PropTypes.object.isRequired,
       getState: React.PropTypes.func.isRequired,
       dispatches: React.PropTypes.object.isRequired
     },
@@ -319,19 +367,21 @@
         self.setState(newState);
       });
 
+      window.addEventListener("keydown", this.props.map.player);
+
+    },
+    componentWillUnmount: function componentWillUnmount() {
+      window.addEventListener("keydown", this.props.map.player);
     },
     restart: function restart() {
-
-    },
-    light: function light() {
-
+      window.location.reload(false);
     },
     render: function render() {
       return(
         React.createElement("div", { id: "content", className: "container" },
           React.createElement(ButtonToolbar, { id: "buttons" },
-            React.createElement(Button, { id: "restart-btn", onClick: this.restart }, "Restart"),
-            React.createElement(Button, { id: "lights-btn", onClick: this.light }, "Light Switch")
+            React.createElement(Button, { id: "restart-btn", onClick: this.restart }, "Restart")
+            //React.createElement(Button, { id: "lights-btn", onClick: this.light }, "Light Switch")
           ),
           React.createElement("br", {}),
           React.createElement("div", { id: "control-panel" },
@@ -346,8 +396,10 @@
             React.createElement(Label, { className: "display-label" }, "Attack:"),
             React.createElement(Label, { className: "tracking-label" }, this.state.player.dmg())
           ),
-          React.createElement(Dungeon, { map: this.state.dungeon }),
-          React.createElement("p", { id: "control-desc" }, "W, A, S, D to Move")
+          React.createElement(Dungeon, { map: this.props.map.container }),
+          React.createElement("p", { id: "control-desc" }, "W, A, S, D to Move / E to Interact  "),
+          React.createElement("p", { id: "control-desc" }, "(*)Potions / (D, A, M)Weapons"),
+          React.createElement("p", { id: "control-desc" }, "(#, &, +) Monsters / ($) Boss")
         )
       );
     }
@@ -369,16 +421,6 @@
 
   Map.init();
   ReactDOM.render(React.createElement(
-      Game, { getState: dungeonStore.getState, dispatches: reduxDispatches }), document.getElementById("main")
+      Game, { getState: dungeonStore.getState, dispatches: reduxDispatches, map: Map }), document.getElementById("main")
   );
-
-  /* Expect Assertion Tests
-  dungeonStore.dispatch({ type: "NEW_WEAPON", weapon: 1 });
-  expect(
-    dungeonStore.getState().player.weapon.id
-  ).toEqual(1);
-
-  console.log("Tests pass!");
-
-  */
 }());
