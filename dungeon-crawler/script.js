@@ -9,7 +9,8 @@
       2016 Michael Sharp
       www.softwareontheshore.com
 
-      TODO: Add Monster 'Fights'
+      TODO: Add Monster 'Fights' Store the state of the monsters and then remove them as they digger
+          TODO: Monsters to ReduxStore - dispatches to updated their health and shit
       TODO: Add Lighting
 */
 
@@ -82,7 +83,7 @@
     container: null,
     player: null,
     monsters: null,
-    map: {},
+    dungeon: {},
 
     init: function() {
       this.display = new ROT.Display({ fontSize: 18, bg: "brown", fg: "black" });
@@ -100,7 +101,7 @@
         if(value) { return; }
 
         let key = x + "," + y;
-        this.map[key] = "";
+        this.dungeon[key] = "";
         freeCells.push(key);
       };
       digger.create(diggerCallback.bind(this));
@@ -146,7 +147,7 @@
       for(let i = 0; i < 7; i++) {
         var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
         var key = freeCells.splice(index, 1)[0];
-        this.map[key] = "*";
+        this.dungeon[key] = "*";
       }
     },
     _generateWeapons: function(freeCells) {
@@ -155,15 +156,15 @@
         let char = "" + weapon.name[0];
         let index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
         let key = freeCells.splice(index, 1)[0];
-        Map.map[key] = char;
+        Map.dungeon[key] = char;
       });
     },
     _drawWholeMap: function() {
-      for(let key in this.map) {
+      for(let key in this.dungeon) {
         let cords = key.split(",");
         let x = parseInt(cords[0]);
         let y = parseInt(cords[1]);
-        this.display.draw(x, y, this.map[key]);
+        this.display.draw(x, y, this.dungeon[key]);
       }
     }
   };
@@ -173,6 +174,7 @@
     this._x = x;
     this._y = y;
     this._draw();
+    this._state = dungeonStore.getState();
   };
 
   Player.prototype._draw = function() {
@@ -206,18 +208,18 @@
     let newKey = newX + "," + newY;
 
     //return if cannot travel in that direct (wall)
-    if(!(newKey in Map.map)) { return; }
+    if(!(newKey in Map.dungeon)) { return; }
 
     /* determine if the space is occupied by an enemy, if so register dmg
       TODO: Add a dmg register and update store
     */
-    if(Map.map[newKey] === "#" || Map.map[newKey] === "$" ||
-    Map.map[newKey] === "&" || Map.map[newKey] === "+") {
-
-
+    if(Map.dungeon[newKey] === "#" || Map.dungeon[newKey] === "$" ||
+    Map.dungeon[newKey] === "&" || Map.dungeon[newKey] === "+") {
+      this._fight(newKey);
+      return;
     }
 
-    Map.display.draw(this._x, this._y, Map.map[this._x + "," + this._y]);
+    Map.display.draw(this._x, this._y, Map.dungeon[this._x + "," + this._y]);
     this._x = newX;
     this._y = newY;
     this._draw();
@@ -227,28 +229,63 @@
   Player.prototype._interact = function() {
     let key = this._x + "," + this._y;
 
-    switch(Map.map[key]) {
+    switch(Map.dungeon[key]) {
       case "*":
+        Map.dungeon[key] = "";
         reduxDispatches.healPlayer();
         break;
       case "D":
+        Map.dungeon[key] = "";
         reduxDispatches.newWeapon(1);
         break;
       case "A":
+        Map.dungeon[key] = "";
         reduxDispatches.newWeapon(2);
         break;
       case "M":
+        Map.dungeon[key] = "";
         reduxDispatches.newWeapon(3);
         break;
     }
   };
 
+  Player.prototype._fight = function(newKey) {
+    let x = parseInt(newKey.split(",")[0]);
+    let y = parseInt(newKey.split(",")[1]);
+
+    let monster = Map.monsters.filter(function(creature) {
+      return(creature._x === x && creature._y === y);
+    });
+
+  };
   /* ROT Monster */
   var Monster = function(x, y, type) {
     this._x = x;
     this._y = y;
     this._type = type;
     this._draw();
+
+    switch(type) {
+      case 0:
+        this._health = MONSTER_TYPES["Big Boss"].health;
+        this._dmg = MONSTER_TYPES["Big Boss"].dmg;
+        break;
+      case 1:
+        this._health = MONSTER_TYPES.Orc.health;
+        this._dmg = MONSTER_TYPES.Orc.dmg;
+        break;
+      case 2:
+        this._health = MONSTER_TYPES.Goblin.health;
+        this._dmg = MONSTER_TYPES.Goblin.dmg;
+        break;
+      case 3:
+        this._health = MONSTER_TYPES.Creetin.health;
+        this._dmg = MONSTER_TYPES.Creetin.dmg;
+        break;
+      default:
+        this._health = 50;
+        this._dmg = 20;
+    }
   };
 
   Monster.prototype._draw = function() {
@@ -274,7 +311,7 @@
         break;
     }
 
-    Map.map[this._x + "," + this._y] = char;
+    Map.dungeon[this._x + "," + this._y] = char;
     Map.display.draw(this._x, this._y, char, color);
   };
 
@@ -349,7 +386,7 @@
   /* React Components */
   const Game = React.createClass({ displayName: "Game",
     propTypes: {
-      map: React.PropTypes.object.isRequired,
+      dungeon: React.PropTypes.object.isRequired,
       getState: React.PropTypes.func.isRequired,
       dispatches: React.PropTypes.object.isRequired
     },
@@ -367,11 +404,11 @@
         self.setState(newState);
       });
 
-      window.addEventListener("keydown", this.props.map.player);
+      window.addEventListener("keydown", this.props.dungeon.player);
 
     },
     componentWillUnmount: function componentWillUnmount() {
-      window.addEventListener("keydown", this.props.map.player);
+      window.addEventListener("keydown", this.props.dungeon.player);
     },
     restart: function restart() {
       window.location.reload(false);
@@ -396,7 +433,7 @@
             React.createElement(Label, { className: "display-label" }, "Attack:"),
             React.createElement(Label, { className: "tracking-label" }, this.state.player.dmg())
           ),
-          React.createElement(Dungeon, { map: this.props.map.container }),
+          React.createElement(Dungeon, { map: this.props.dungeon.container }),
           React.createElement("p", { id: "control-desc" }, "W, A, S, D to Move / E to Interact  "),
           React.createElement("p", { id: "control-desc" }, "(*)Potions / (D, A, M)Weapons"),
           React.createElement("p", { id: "control-desc" }, "(#, &, +) Monsters / ($) Boss")
@@ -420,7 +457,8 @@
   });
 
   Map.init();
+
   ReactDOM.render(React.createElement(
-      Game, { getState: dungeonStore.getState, dispatches: reduxDispatches, map: Map }), document.getElementById("main")
+      Game, { getState: dungeonStore.getState, dispatches: reduxDispatches, dungeon: Map }), document.getElementById("main")
   );
 }());
