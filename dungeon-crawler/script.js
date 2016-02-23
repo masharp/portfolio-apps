@@ -9,9 +9,10 @@
       2016 Michael Sharp
       www.softwareontheshore.com
 
-      TODO: Add Monster 'Fights' Store the state of the monsters and then remove them as they digger
+      TODO: Add Monster 'Fights' Store the state of the monsters and then remove them as they die
           TODO: Monsters to ReduxStore - dispatches to updated their health and shit
       TODO: Add Lighting
+      TODO: Instructions Overlay
 */
 
 /*jshint esnext: true */
@@ -23,6 +24,7 @@
   const Button = ReactBootstrap.Button;
   const ButtonToolbar = ReactBootstrap.ButtonToolbar;
   const Label = ReactBootstrap.Label;
+  const Modal = ReactBootstrap.Modal;
 
   /* Script Globals */
   const WEAPON_TYPES = [
@@ -92,10 +94,10 @@
       this._generateMap();
     },
     _generateMap: function() {
-      let digger = new ROT.Map.Digger();
+      let rogue = new ROT.Map.Rogue();
       let freeCells = [];
 
-      let diggerCallback = function(x, y, value) {
+      let rogueCallback = function(x, y, value) {
         this.display.DEBUG(x, y, value);
 
         if(value) { return; }
@@ -104,7 +106,7 @@
         this.dungeon[key] = "";
         freeCells.push(key);
       };
-      digger.create(diggerCallback.bind(this));
+      rogue.create(rogueCallback.bind(this));
 
       this._generatePotions(freeCells);
       this._generateWeapons(freeCells);
@@ -231,18 +233,22 @@
 
     switch(Map.dungeon[key]) {
       case "*":
+        document.getElementById("messages").value += "Found a Potion. You have been healed!\n";
         Map.dungeon[key] = "";
         reduxDispatches.healPlayer();
         break;
       case "D":
+      document.getElementById("messages").value += "Found a dagger. Be careful!\n";
         Map.dungeon[key] = "";
         reduxDispatches.newWeapon(1);
         break;
       case "A":
+        document.getElementById("messages").value += "Found an axe. Use it well!\n";
         Map.dungeon[key] = "";
         reduxDispatches.newWeapon(2);
         break;
       case "M":
+        document.getElementById("messages").value += "Found a maul! Swing with fury!\n";
         Map.dungeon[key] = "";
         reduxDispatches.newWeapon(3);
         break;
@@ -392,7 +398,7 @@
     },
     /* Initial state determined by calling the redux store */
     getInitialState: function getInitialState() {
-      return this.props.getState();
+      return ({ showOverlay: false, data: this.props.getState()});
     },
     /* Upon document loading - subscribe to the store and update the react DOM */
     componentDidMount: function componentDidMount() {
@@ -413,30 +419,48 @@
     restart: function restart() {
       window.location.reload(false);
     },
+    open: function open() {
+      this.setState({ showOverlay: true });
+    },
+    close: function close() {
+      this.setState({ showOverlay: false });
+    },
     render: function render() {
       return(
         React.createElement("div", { id: "content", className: "container" },
           React.createElement(ButtonToolbar, { id: "buttons" },
-            React.createElement(Button, { id: "restart-btn", onClick: this.restart }, "Restart")
+            React.createElement(Button, { id: "restart-btn", onClick: this.restart, bsStyle: "warning" }, "Restart"),
             //React.createElement(Button, { id: "lights-btn", onClick: this.light }, "Light Switch")
+            React.createElement(Button, { id: "instr-btn", onClick: this.open, bsStyle: "primary" }, "Instructions"),
+            React.createElement(Modal, { id: "overlay", show: this.state.showOverlay, onHide: this.close },
+              React.createElement(Modal.Header, { closeButton: true },
+                React.createElement(Modal.Title, { }, "Instructions")
+              ),
+              React.createElement(Modal.Body, null,
+                React.createElement("p", { className: "instr" }, "Movement: W, A, S, D"),
+                React.createElement("p", { className: "instr"  }, "Interaction: E"),
+                React.createElement("p", { className: "instr"  }, "'A' / 'M'/ 'D' -> WEAPONS"),
+                React.createElement("p", { className: "instr"  }, "'*' -> POTIONS"),
+                React.createElement("p", { className: "instr"  }, "'#' / '&' / '+' -> MONSTERS"),
+                React.createElement("p", { className: "instr"  }, "'$' -> BOSS")
+              )
+            )
           ),
           React.createElement("br", {}),
           React.createElement("div", { id: "control-panel" },
             React.createElement(Label, { className: "display-label" }, "Health:"),
-            React.createElement(Label, { className: "tracking-label" }, this.state.player.health),
+            React.createElement(Label, { className: "tracking-label" }, this.state.data.player.health),
             React.createElement(Label, { className: "display-label" }, "Level:"),
-            React.createElement(Label, { className: "tracking-label" }, this.state.player.level),
+            React.createElement(Label, { className: "tracking-label" }, this.state.data.player.level),
             React.createElement(Label, { className: "display-label" }, "Experience:"),
-            React.createElement(Label, { className: "tracking-label" }, this.state.player.exp),
+            React.createElement(Label, { className: "tracking-label" }, this.state.data.player.exp),
             React.createElement(Label, { className: "display-label" }, "Weapon:"),
-            React.createElement(Label, { className: "tracking-label" }, this.state.player.weapon.name),
+            React.createElement(Label, { className: "tracking-label" }, this.state.data.player.weapon.name),
             React.createElement(Label, { className: "display-label" }, "Attack:"),
-            React.createElement(Label, { className: "tracking-label" }, this.state.player.dmg())
+            React.createElement(Label, { className: "tracking-label" }, this.state.data.player.dmg())
           ),
-          React.createElement(Dungeon, { map: this.props.dungeon.container }),
-          React.createElement("p", { id: "control-desc" }, "W, A, S, D to Move / E to Interact  "),
-          React.createElement("p", { id: "control-desc" }, "(*)Potions / (D, A, M)Weapons"),
-          React.createElement("p", { id: "control-desc" }, "(#, &, +) Monsters / ($) Boss")
+          React.createElement("textarea", { id: "messages", ref: "textarea", readOnly: "readOnly"}),
+          React.createElement(Dungeon, { map: this.props.dungeon.container })
         )
       );
     }

@@ -19,11 +19,6 @@ canvas {
     text-align: center; }
     #main #content #buttons {
       display: inline-block; }
-      #main #content #buttons #restart-btn {
-        background-color: #cdcdcd;
-        color: black; }
-        #main #content #buttons #restart-btn:hover {
-          background-color: white; }
     #main #content #control-panel {
       display: inline-block;
       font-size: .9em;
@@ -38,10 +33,18 @@ canvas {
         margin-left: .25em;
         font-weight: bolder;
         font-size: 1em; }
+    #main #content #messages {
+      width: 50%;
+      resize: none;
+      margin: .2em;
+      font-size: .7em; }
 
 .footer {
   text-align: center;
   margin-top: 1em;
   font-size: .6em; }
+
+.instr {
+  font-size: .7em; }
 
 /*# sourceMappingURL=style.css.map */
