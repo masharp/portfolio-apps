@@ -143,6 +143,7 @@
         monsters.push(new Monster(x, y, type.id));
       });
 
+      reduxDispatches.updateMonsters(monsters);
       return monsters;
     },
     _generatePotions: function(freeCells) {
@@ -259,10 +260,24 @@
     let x = parseInt(newKey.split(",")[0]);
     let y = parseInt(newKey.split(",")[1]);
 
-    let monster = Map.monsters.filter(function(creature) {
+    //get monsters, then filter out current monsters, then update store
+    let monsters = dungeonStore.getState().monsters;
+    let monster = monsters.filter(function(creature) {
       return(creature._x === x && creature._y === y);
     });
 
+    //remove the current monster from the monsters array
+    console.log(monsters);
+    monsters.filter(function(creature) {
+      return(creature._x !== monster._x);
+    });
+
+    console.log(monsters);
+    let dmg = monster[0]._dmg;
+    let health = monster[0]._health;
+
+    console.log(monster[0]);
+    console.log("H " + health + " D " + dmg);
   };
   /* ROT Monster */
   var Monster = function(x, y, type) {
@@ -334,7 +349,8 @@
         exp: 0,
         weapon: WEAPON_TYPES[0]
       },
-      lightsOn: false
+      lightsOn: false,
+      monsters: Map.monsters
     };
 
     switch(action.type) {
@@ -358,7 +374,9 @@
         state.player.health = state.player.baseHealth;
         state.player.baseDmg = state.player.baseDmg + 5;
         state.player.level = state.player.level + 1;
-
+        return state;
+      case "UPDATE_MONSTERS":
+        state.monsters = action.monsters;
         return state;
       default:
         return state;
@@ -383,6 +401,9 @@
     },
     levelUp: function levelUp() {
       dungeonStore.dispatch( { type: "LEVEL_UP" });
+    },
+    updateMonsters: function updateMonsters(monsters) {
+      dungeonStore.dispatch({ type: "UPDATE_MONSTERS", monsters: monsters });
     }
   };
 
