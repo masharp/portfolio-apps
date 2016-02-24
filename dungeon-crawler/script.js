@@ -8,7 +8,8 @@
 
       2016 Michael Sharp
       www.softwareontheshore.com
-      TODO: Add Lighting
+
+      TODO: Add shadowcasting
 */
 
 /*jshint esnext: true */
@@ -88,6 +89,7 @@
 
       this._generateMap();
     },
+    /* Private function to generate the map and trigger player, monsters, and item functions */
     _generateMap: function() {
       let rogue = new ROT.Map.Rogue();
       let freeCells = [];
@@ -111,6 +113,7 @@
       this.player = this._generatePlayer(freeCells);
       this.monsters = this._generateMonsters(freeCells);
     },
+    /* Private function to generate the player and create a new instance */
     _generatePlayer: function(freeCells) {
       let index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
       let key = freeCells.splice(index, 1)[0];
@@ -120,6 +123,7 @@
 
       return new Player(x, y);
     },
+    /* Private function to generate 15 monsters based on their weighted value */
     _generateMonsters: function(freeCells) {
       let monsters = [];
       let monsterTypes = [];
@@ -141,6 +145,7 @@
       reduxDispatches.updateMonsters(monsters);
       return monsters;
     },
+    /* Private function to generate 7 potions */
     _generatePotions: function(freeCells) {
       for(let i = 0; i < 7; i++) {
         var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
@@ -148,6 +153,7 @@
         this.dungeon[key] = "*";
       }
     },
+    /* Private function to generate the 3 upgradable weapons */
     _generateWeapons: function(freeCells) {
       WEAPON_TYPES.forEach(function(weapon) {
         if(weapon.name === "Club") { return; }
@@ -157,6 +163,7 @@
         Map.dungeon[key] = char;
       });
     },
+    /* Private helper function to finish drawing the rest of the map based on key store */
     _drawWholeMap: function() {
       for(let key in this.dungeon) {
         let cords = key.split(",");
@@ -175,10 +182,14 @@
     this._state = dungeonStore.getState();
   };
 
+  /* Player function to draw it's new location.
+    TODO: Add Shadowcasting */
   Player.prototype._draw = function() {
     Map.display.draw(this._x, this._y, "@", "#ff0");
   };
 
+  /* Player function to handle user keypresses and movement around map .
+     Given control by React prop */
   Player.prototype.handleEvent = function(event) {
     let code = event.keyCode;
 
@@ -208,9 +219,7 @@
     //return if cannot travel in that direct (wall)
     if(!(newKey in Map.dungeon)) { return; }
 
-    /* determine if the space is occupied by an enemy, if so register dmg
-      TODO: Add a dmg register and update store
-    */
+    /* determine if the space is occupied by an enemy, if so register dmg */
     if(Map.dungeon[newKey] === "#" || Map.dungeon[newKey] === "$" ||
     Map.dungeon[newKey] === "&" || Map.dungeon[newKey] === "+") {
       this._fight(newKey);
@@ -221,9 +230,23 @@
     this._x = newX;
     this._y = newY;
     this._draw();
+
+    let fovCallback = function(x, y) {
+      let key = x + "," + y;
+      if(key in Map.dungeon) { return (Map.dungeon[key] === 0); }
+      return false;
+    };
+
+    let fieldOfView = new ROT.FOV.PreciseShadowcasting(fovCallback);
+
+    field.compute(newX, newY, 10, function(x, y, r, visibility) {
+      Map.display.draw(x, y, Map.dungeon[key]);
+
+    });
   };
 
-  /* Function for player interacting with items. results in a redix dispatch */
+  /* Function for player interacting with items. results in a redix dispatch.
+    Also updates the game messages */
   Player.prototype._interact = function() {
     let key = this._x + "," + this._y;
 
@@ -255,6 +278,7 @@
     }
   };
 
+  /* Player function to parse current enemy and deal damage, see if alive/dead, etc */
   Player.prototype._fight = function(newKey) {
     let x = parseInt(newKey.split(",")[0]);
     let y = parseInt(newKey.split(",")[1]);
@@ -277,6 +301,7 @@
     let userDmg = dungeonStore.getState().player.dmg();
     let userHealth = dungeonStore.getState().player.health;
 
+    //register player and monster damage
     monster._health -= userDmg;
     reduxDispatches.damagePlayer(monsterDmg);
 
@@ -319,6 +344,7 @@
     this._type = type;
     this._draw();
 
+    //Assign health and damage to monster based on type
     switch(type) {
       case 0:
         this._health = MONSTER_TYPES["Big Boss"].health;
@@ -342,6 +368,7 @@
     }
   };
 
+  /* Monster function to draw itself based on type */
   Monster.prototype._draw = function() {
     let color = "";
     let char = "";
@@ -532,6 +559,8 @@
       );
     }
   });
+
+  //Initializes the ROT object in order to pass it's values to React as a prop
   Map.init();
 
   ReactDOM.render(React.createElement(
