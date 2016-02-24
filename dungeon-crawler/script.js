@@ -318,6 +318,7 @@
       reduxDispatches.addXp();
     }
 
+    //check if the player is dead
     if(dungeonStore.getState().player.health <= 0) {
       if(confirm("You've died! Try again!")) {
         window.location.reload(false);
@@ -331,6 +332,15 @@
       document.getElementById("messages").value += "Leveled up!\n";
       document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
       reduxDispatches.levelUp();
+    }
+
+    //check if the player wins
+    if(monsters.length === 0) {
+      if(confirm("You win! Try again!")) {
+        window.location.reload(false);
+      } else {
+        window.location.reload(false);
+      }
     }
 
     reduxDispatches.updateMonsters(monsters);
