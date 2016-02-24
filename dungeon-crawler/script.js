@@ -8,11 +8,7 @@
 
       2016 Michael Sharp
       www.softwareontheshore.com
-
-      TODO: Add Monster 'Fights' Store the state of the monsters and then remove them as they die
-          TODO: Monsters to ReduxStore - dispatches to updated their health and shit
       TODO: Add Lighting
-      TODO: Instructions Overlay
 */
 
 /*jshint esnext: true */
@@ -20,13 +16,13 @@
 (function() {
   "use strict";
 
-  /* React Bootstrap Components */
+  /****************** React Bootstrap Components *******************/
   const Button = ReactBootstrap.Button;
   const ButtonToolbar = ReactBootstrap.ButtonToolbar;
   const Label = ReactBootstrap.Label;
   const Modal = ReactBootstrap.Modal;
 
-  /* Script Globals */
+  /*************** Dungeon Constants  *******************************/
   const WEAPON_TYPES = [
     {
       name: "Club",
@@ -36,17 +32,17 @@
    {
       name: "Dagger",
       id: 1,
-      dmg: 15
+      dmg: 20
     },
     {
       name: "Axe",
       id: 2,
-      dmg: 20
+      dmg: 30
     },
     {
       name: "Maul",
       id: 3,
-      dmg: 30
+      dmg: 50
     }
   ];
   const MONSTER_TYPES = {
@@ -58,28 +54,27 @@
     },
     "Big Boss": {
       id: 0,
-      health: 75,
-      dmg: 20
+      health: 100,
+      dmg: 100
     },
     "Orc": {
       id: 1,
-      health: 25,
-      dmg: 15
+      health: 40,
+      dmg: 25
     },
     "Goblin": {
       id: 2,
-      health: 20,
-      dmg: 10
+      health: 30,
+      dmg: 15
     },
     "Creetin": {
       id: 3,
-      health: 15,
-      dmg: 5
+      health: 20,
+      dmg: 10
     }
   };
-
-  /* ----------------------------- */
-  /* ROT Game Object */
+  /**************************************************************
+  ***************** ROT Game Object *****************************/
   var Map = {
     display: null,
     container: null,
@@ -129,7 +124,7 @@
       let monsters = [];
       let monsterTypes = [];
 
-      for(let i = 0; i < 10; i++) {
+      for(let i = 0; i < 15; i++) {
         let type = ROT.RNG.getWeightedValue(MONSTER_TYPES.Weight);
         monsterTypes.push(MONSTER_TYPES[type]);
       }
@@ -172,7 +167,7 @@
     }
   };
 
-  /* ROT Player */
+  /************************ ROT Player ************************/
   var Player = function(x, y) {
     this._x = x;
     this._y = y;
@@ -235,21 +230,25 @@
     switch(Map.dungeon[key]) {
       case "*":
         document.getElementById("messages").value += "Found a Potion. You have been healed!\n";
+        document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
         Map.dungeon[key] = "";
         reduxDispatches.healPlayer();
         break;
       case "D":
-      document.getElementById("messages").value += "Found a dagger. Be careful!\n";
+        document.getElementById("messages").value += "Found a dagger. Be careful!\n";
+        document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
         Map.dungeon[key] = "";
         reduxDispatches.newWeapon(1);
         break;
       case "A":
         document.getElementById("messages").value += "Found an axe. Use it well!\n";
+        document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
         Map.dungeon[key] = "";
         reduxDispatches.newWeapon(2);
         break;
       case "M":
         document.getElementById("messages").value += "Found a maul! Swing with fury!\n";
+        document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
         Map.dungeon[key] = "";
         reduxDispatches.newWeapon(3);
         break;
@@ -264,22 +263,56 @@
     let monsters = dungeonStore.getState().monsters;
     let monster = monsters.filter(function(creature) {
       return(creature._x === x && creature._y === y);
-    });
+    })[0];
 
     //remove the current monster from the monsters array
-    console.log(monsters);
-    monsters.filter(function(creature) {
-      return(creature._x !== monster._x);
+    monsters = monsters.filter(function(i) {
+      return !(i._x === x && i._y === y);
     });
 
+    //register the damage and / or death of monster then update the store
     console.log(monsters);
-    let dmg = monster[0]._dmg;
-    let health = monster[0]._health;
+    console.log(monster);
+    let monsterDmg = monster._dmg;
+    let userDmg = dungeonStore.getState().player.dmg();
+    let userHealth = dungeonStore.getState().player.health;
 
-    console.log(monster[0]);
-    console.log("H " + health + " D " + dmg);
+    monster._health -= userDmg;
+    reduxDispatches.damagePlayer(monsterDmg);
+
+    if(monster._health > 0) {
+      document.getElementById("messages").value += "You damage the monster for " + userDmg +
+            ". " + monster._health + " health remaining\n";
+      document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
+      monsters.push(monster);
+    } else {
+      document.getElementById("messages").value += "Monster killed! You gained xp!\n";
+      document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
+      Map.dungeon[newKey] = "";
+      Map.display.draw(x, y, Map.dungeon[newKey]);
+      reduxDispatches.addXp();
+    }
+
+    if(dungeonStore.getState().player.health <= 0) {
+      if(confirm("You've died! Try again!")) {
+        window.location.reload(false);
+      } else {
+        window.location.reload(false);
+      }
+    }
+
+    //check if enough xp to level up
+    if(dungeonStore.getState().player.exp / dungeonStore.getState().player.level >= 20) {
+      document.getElementById("messages").value += "Leveled up!\n";
+      document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
+      reduxDispatches.levelUp();
+    }
+
+    reduxDispatches.updateMonsters(monsters);
   };
-  /* ROT Monster */
+
+
+  /**************** ROT Monster ***********************/
   var Monster = function(x, y, type) {
     this._x = x;
     this._y = y;
@@ -336,8 +369,8 @@
     Map.display.draw(this._x, this._y, char, color);
   };
 
-/*----------------------------------*/
-  /* Redux Reducer Function */
+  /**************************************************************
+  ***************** ReduxReducer Function *****************************/
   const dungeonReducer = function(state, action) {
     if(state === undefined) state = {
       player: {
@@ -362,12 +395,9 @@
         return state;
       case "ADD_XP":
         state.player.exp += 10;
-        if(state.player.exp > 30) {
-          reduxDispatches.levelUp();
-        }
         return state;
       case "DMG_PLAYER":
-        state.player.health = state.player.health - action.amount;
+        state.player.health -= action.amount;
         return state;
       case "LEVEL_UP":
         state.player.baseHealth = state.player.baseHealth + 50;
@@ -385,7 +415,8 @@
     return state;
   };
 
-  /* Redux Dispatch Function */
+  /**************************************************************
+  ***************** Redux Dispatcher Function *****************************/
   const reduxDispatches = {
     newWeapon: function newWeapon(weapon) {
       dungeonStore.dispatch({ type: "NEW_WEAPON", weapon: weapon });
@@ -410,7 +441,8 @@
   /* Redux Store */
   var dungeonStore = Redux.createStore(dungeonReducer);
 
-  /* React Components */
+  /**************************************************************
+  ***************** React Components *****************************/
   const Game = React.createClass({ displayName: "Game",
     propTypes: {
       dungeon: React.PropTypes.object.isRequired,
@@ -432,7 +464,6 @@
       });
 
       window.addEventListener("keydown", this.props.dungeon.player);
-
     },
     componentWillUnmount: function componentWillUnmount() {
       window.addEventListener("keydown", this.props.dungeon.player);
@@ -458,6 +489,7 @@
                 React.createElement(Modal.Title, { }, "Instructions")
               ),
               React.createElement(Modal.Body, null,
+                React.createElement("p", { className: "instr"  }, "Win: KILL ALL MONSTERS"),
                 React.createElement("p", { className: "instr" }, "Movement: W, A, S, D"),
                 React.createElement("p", { className: "instr"  }, "Interaction: E"),
                 React.createElement("p", { className: "instr"  }, "'A' / 'M'/ 'D' -> WEAPONS"),
@@ -500,7 +532,6 @@
       );
     }
   });
-
   Map.init();
 
   ReactDOM.render(React.createElement(
