@@ -1,0 +1,77 @@
+#top {
+  width: 100%;
+  text-align: center;
+  margin: .5em;
+}
+#main {
+  #content {
+    #toolbar {
+      width: 100%;
+      text-align: center;
+
+      #buttons {
+        display: inline-block;
+      }
+    }
+    #graphs {
+      text-align: center;
+
+      .hidden {
+        display: none;
+      }
+      .graph {
+        margin: .5em;
+      }
+
+      #scatter-graph text {
+        font-size: .75em;
+      }
+      #bar-graph, #scatter-graph, #heat-graph, #force-graph, #global-graph {
+        background-color: white;
+        padding: 1em;
+        box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.32), 0 3px 12px 0 rgba(0, 0, 0, 0.24);
+
+
+        p {
+          margin: .1em;
+          font-size: .8em;
+        }
+        .axis {
+          text {
+            font: 1em sans-serif;
+          }
+          path, line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+          }
+        }
+        .tooltip {
+          position: absolute;
+          text-align: left;
+          width: auto;
+          height: auto;
+          padding: 3px 5px 3px 5px;
+          font: 1em sans-serif;
+          border: 0px;
+          border-radius: 5px;
+          pointer-events: none;
+          box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+          background-color: lightsteelblue;
+        }
+        .gdp, .name {
+          font-size: 1em;
+          font-weight: bold;
+        }
+        .year  {
+          font-size: 0.8em;
+          font-weight: normal;
+        }
+      }
+    }
+  }
+}
+.footer {
+  text-align: center;
+  margin: 1em;
+}

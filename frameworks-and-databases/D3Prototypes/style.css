@@ -1,0 +1,55 @@
+#top {
+  width: 100%;
+  text-align: center;
+  margin: .5em; }
+
+#main #content #toolbar {
+  width: 100%;
+  text-align: center; }
+  #main #content #toolbar #buttons {
+    display: inline-block; }
+#main #content #graphs {
+  text-align: center; }
+  #main #content #graphs .hidden {
+    display: none; }
+  #main #content #graphs .graph {
+    margin: .5em; }
+  #main #content #graphs #scatter-graph text {
+    font-size: .75em; }
+  #main #content #graphs #bar-graph, #main #content #graphs #scatter-graph, #main #content #graphs #heat-graph, #main #content #graphs #force-graph, #main #content #graphs #global-graph {
+    background-color: white;
+    padding: 1em;
+    box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.32), 0 3px 12px 0 rgba(0, 0, 0, 0.24); }
+    #main #content #graphs #bar-graph p, #main #content #graphs #scatter-graph p, #main #content #graphs #heat-graph p, #main #content #graphs #force-graph p, #main #content #graphs #global-graph p {
+      margin: .1em;
+      font-size: .8em; }
+    #main #content #graphs #bar-graph .axis text, #main #content #graphs #scatter-graph .axis text, #main #content #graphs #heat-graph .axis text, #main #content #graphs #force-graph .axis text, #main #content #graphs #global-graph .axis text {
+      font: 1em sans-serif; }
+    #main #content #graphs #bar-graph .axis path, #main #content #graphs #bar-graph .axis line, #main #content #graphs #scatter-graph .axis path, #main #content #graphs #scatter-graph .axis line, #main #content #graphs #heat-graph .axis path, #main #content #graphs #heat-graph .axis line, #main #content #graphs #force-graph .axis path, #main #content #graphs #force-graph .axis line, #main #content #graphs #global-graph .axis path, #main #content #graphs #global-graph .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges; }
+    #main #content #graphs #bar-graph .tooltip, #main #content #graphs #scatter-graph .tooltip, #main #content #graphs #heat-graph .tooltip, #main #content #graphs #force-graph .tooltip, #main #content #graphs #global-graph .tooltip {
+      position: absolute;
+      text-align: left;
+      width: auto;
+      height: auto;
+      padding: 3px 5px 3px 5px;
+      font: 1em sans-serif;
+      border: 0px;
+      border-radius: 5px;
+      pointer-events: none;
+      box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+      background-color: lightsteelblue; }
+    #main #content #graphs #bar-graph .gdp, #main #content #graphs #bar-graph .name, #main #content #graphs #scatter-graph .gdp, #main #content #graphs #scatter-graph .name, #main #content #graphs #heat-graph .gdp, #main #content #graphs #heat-graph .name, #main #content #graphs #force-graph .gdp, #main #content #graphs #force-graph .name, #main #content #graphs #global-graph .gdp, #main #content #graphs #global-graph .name {
+      font-size: 1em;
+      font-weight: bold; }
+    #main #content #graphs #bar-graph .year, #main #content #graphs #scatter-graph .year, #main #content #graphs #heat-graph .year, #main #content #graphs #force-graph .year, #main #content #graphs #global-graph .year {
+      font-size: 0.8em;
+      font-weight: normal; }
+
+.footer {
+  text-align: center;
+  margin: 1em; }
+
+/*# sourceMappingURL=style.css.map */
