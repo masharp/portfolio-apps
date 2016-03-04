@@ -104,10 +104,12 @@
       };
     },
     componentDidMount: function componentDidMount() {
-      /* jQuery ajax call for Bar Data. Asynchronous, so we need to put the drawBarGraph
+      /* D3 ajax call for Bar Data. Asynchronous, so we need to put the drawBarGraph
       function inside the request callback */
-      this.serverRequest = $.get(this.props.barURL, function(result) {
-        this.setState({ rawData: JSON.parse(result), barData: JSON.parse(result).data });
+      this.serverRequest = d3.json(this.props.barURL, function(error, result) {
+        if(error) console.error("Error fetching bar data!", error);
+
+        this.setState({ rawData: result, barData: result.data });
         this.drawBarGraph();
       }.bind(this));
     },
@@ -138,10 +140,8 @@
 
 
       /* set the orientation, scale and tick style of the x and y axis */
-      let xAxis = d3.svg.axis()
-        .scale(x).orient("bottom").ticks(d3.time.years, 4);
-      let yAxis = d3.svg.axis()
-        .scale(y).orient("left").ticks(10, "");
+      let xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(d3.time.years, 4);
+      let yAxis = d3.svg.axis().scale(y).orient("left").ticks(10, "");
 
       /* define the mouseover tooltip elements */
       let tooltip = d3.select(".tooltip");
@@ -201,9 +201,7 @@
 
           //Mouse ends hover event
           .on("mouseout", function() {
-            let element = d3.select(this);
-
-            element.attr("class", "mouseout");
+            let element = d3.select(this).attr("class", "mouseout");
             tooltipElement.transition().duration(300)
               .style("opacity", 0);
           });
@@ -223,10 +221,11 @@
       return { scatterData: null };
     },
     componentDidMount: function componentDidMount() {
-      /* jQuery ajax call for Bar Data. Asynchronous, so we need to put the drawBarGraph
+      /* D3 ajax call for scatter Data. Asynchronous, so we need to put the drawGraph
       function inside the request callback */
-      this.serverRequest = $.get(this.props.scatterURL, function(result) {
-        this.setState({ scatterData: JSON.parse(result) });
+      this.serverRequest = d3.json(this.props.scatterURL, function(error, result) {
+        if(error) console.error("Error in fetching scatter data!", error);
+        this.setState({ scatterData: result });
         this.drawScatterGraph();
       }.bind(this));
     },
@@ -250,8 +249,7 @@
         x - time out from fastest
         y - placement in the race */
       let x = d3.scale.linear().domain([slowestTime / 13, 0]).range([0, width]);
-      let y = d3.scale.linear().range([0, height])
-        .domain([firstPlace, lastPlace + 1]);
+      let y = d3.scale.linear().domain([firstPlace, lastPlace + 1]).range([0, height]);
 
       /* set the orientation, scale and tick style of the x and y axis */
       let xAxis = d3.svg.axis()
@@ -260,8 +258,7 @@
           time.setSeconds(time.getSeconds() + d);
           return d3.time.format("%H:%M")(time);
         });
-      let yAxis = d3.svg.axis()
-        .scale(y).orient("left").ticks(6);
+      let yAxis = d3.svg.axis().scale(y).orient("left").ticks(6);
 
       /* define the mouseover tooltip elements */
       let tooltip = d3.select(".tooltip");
@@ -358,9 +355,7 @@
 
             //Mouse ends hover event
             .on("mouseout", function() {
-              let element = d3.select(this);
-
-              element.attr("class", "mouseout");
+              let element = d3.select(this).attr("class", "mouseout");
               tooltipElement.transition().duration(300)
                 .style("opacity", 0);
             });
@@ -380,11 +375,12 @@
       return { heatMapData: null };
     },
     componentDidMount: function componentDidMount() {
-      /* jQuery ajax call for Bar Data. Asynchronous, so we need to put the drawBarGraph
+      /* d3 ajax call for heat data. Asynchronous, so we need to put the drawGraph
       function inside the request callback */
-      this.serverRequest = $.get(this.props.heatURL, function(result) {
-        this.setState({ heatMapData: JSON.parse(result) });
-        console.log(this.state.heatMapData);
+      this.serverRequest = d3.json(this.props.heatURL, function(error, result) {
+        if(error) console.error("Error fetching heat data!", error);
+
+        this.setState({ heatMapData: result });
         this.drawHeatMap();
       }.bind(this));
     },
@@ -396,10 +392,147 @@
             " anomalies relative to the Jan 1951-Dec 1980 average.");
       d3.select("#heat-graph").append("p").text("Estimated Jan 1951-Dec 1980 absolute temperature ℃: 8.66 +/- 0.07");
 
-      /* Set graph margins */
-      let margin = { top: 10, right: 20, bottom: 20, left: 50 };
-      let width = 900 - margin.left - margin.right;
-      let height = 400 - margin.top - margin.bottom;
+      /* Set graph margins and dimensions*/
+      let margin = { top: 20, right: 20, bottom: 120, left: 100 };
+      let width = 1100 - margin.left - margin.right;
+      let height = 600 - margin.top - margin.bottom;
+
+      /* Graph Scope Variables */
+      let months = ["January", "February", "March", "April", "May", "June", "July", "August",
+                    "September", "October", "November", "December"];
+      let colorVariance = ["#FF86DB", "#FFD2F2", "#34738C", "#91C4D8", "#D1F1FE",
+                          "#FFFFC0", "#FFFF72", "#FFD072", "#FFB872", "#FF8972", "#8C1700"];
+      let baseTemp = this.state.heatMapData.baseTemperature;
+
+      /* Extract only the unique years from each data point */
+      let recordedYears = this.state.heatMapData.monthlyVariance.map(
+        (variance) => { return variance.year; });
+      recordedYears = recordedYears.filter( (y, i) => { return recordedYears.indexOf(y) === i; });
+
+      /* Extract the monthly variances and find the lows / highs */
+      let monthlyVarianceData = this.state.heatMapData.monthlyVariance.map(
+        (variance) => { return variance.variance; });
+
+      /* Extract the highest and lowest data points */
+      let lowestVariance = d3.min(monthlyVarianceData);
+      let highestVariance = d3.max(monthlyVarianceData);
+      let oldestYear = d3.min(recordedYears);
+      let recentYear = d3.max(recordedYears);
+      let beginDate = new Date(oldestYear, 0);
+      let endDate = new Date(recentYear, 0);
+
+      /* Find the dimensions of the heat map */
+      let mapWidth = width / recordedYears.length;
+      let mapHeight = height / months.length - .5;
+
+      /* Draw the color variance legend */
+      let varianceScale = d3.scale.quantile()
+        .domain([lowestVariance + baseTemp, highestVariance + baseTemp]).range(colorVariance);
+
+      /* set the x domains and domain representations, scale and style
+        x - time (years) */
+      let x = d3.time.scale().domain([beginDate, endDate]).range([0, width]);
+      let xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(d3.time.years, 11);
+
+      /* define the mouseover tooltip elements */
+      let tooltip = d3.select(".tooltip");
+      let tooltipElement = d3.select("#heat-graph").append("div")
+        .attr("class", "tooltip").style("opacity", 0);
+
+      /* draw the svg and graph*/
+      let graph = d3.select("#heat-graph").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+      /* Draw the month labels to the left and label that axis */
+      graph.selectAll(".heatMonth")
+        .data(months)
+        .enter().append("text")
+        .attr("class", "heatMonth")
+        .attr("x", -60)
+        .attr("y", (d, i) => { return i * mapHeight; })
+        .attr("transform", "translate(-6," + mapHeight / 1.5 + ")")
+        .text( (d) => { return d; });
+
+      graph.append("g")
+        .attr("transform", "translate(" + -85 + "," + (height / 2) + ")")
+        .append("text")
+          .attr("class", "heatLabel")
+          .attr("text-anchor", "middle")
+          .attr("transform", "rotate(-90)")
+          .text("Months");
+
+      /* Draw the x-axis */
+      graph.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+      graph.append("g")
+        .attr("transform", "translate(" + (width / 2) + "," + (height + 50) + ")")
+        .append("text")
+          .attr("class", "heatLabel")
+          .attr("text-anchor", "middle")
+          .text("Years");
+
+      /* Draw the monthly points and color them */
+      graph.selectAll(".tempYears")
+        .data(this.state.heatMapData.monthlyVariance, (d) => { return (d.year + ":" + d.month); })
+        .enter().append("rect")
+          .attr("class", "tempYears")
+          .attr("x", (d) => { return ((d.year - oldestYear) * mapWidth); })
+          .attr("y", (d) => { return ((d.month - 1) * mapHeight); })
+          .attr("rx", 0)
+          .attr("ry", 0)
+          .attr("width", mapWidth)
+          .attr("height", mapHeight)
+          .style("fill", "gray")
+          //Mouse hover event on item for tooltip
+          .on("mouseover", function(d) {
+            let element = d3.select(this).attr("class", "mouseover");
+
+            tooltipElement.transition().duration(150)
+              .style("opacity", 0.9);
+
+            tooltipElement.html("<em class='name'>" + d.year + " - " + months[d.month - 1] + "</em><br>" +
+              "<p>" + "Temperature: " + (Math.floor((d.variance + baseTemp) * 1000) / 1000) + " &#8451" + "</p><p>" +
+              "<p>" + "Variance: " + d.variance + " &#8451" + "</p>")
+              .style("left", (d3.event.pageX + 5) + "px")
+              .style("top", (d3.event.pageY - 50) + "px");
+          })
+          //Mouse ends hover event
+          .on("mouseout", function() {
+            let element = d3.select(this).attr("class", "mouseout");
+            tooltipElement.transition().duration(300)
+              .style("opacity", 0);
+          })
+          .transition().duration(3000)
+            .style("fill", (d) => { return varianceScale(d.variance + baseTemp); });
+
+        /* Draw the legend by plotting it on the graph and then coloring the blocks
+          with an array loop */
+        let legendWidth = 40;
+        graph.selectAll(".heatLegend")
+          .data([0].concat(varianceScale.quantiles()), (d) => { return d; })
+          .enter().append("g")
+            .attr("class", "heatLegend")
+            .append("rect")
+              .attr("x", (d, i) => { return legendWidth * i + (50 * colorVariance.length); })
+              .attr("y", height + 70)
+              .attr("width", legendWidth)
+              .attr("height", mapHeight / 2)
+              .style("fill", (d, i) => { return colorVariance[i]; });
+
+        /* Draw the text for the legend and then place it below the legend grid */
+        graph.selectAll(".heatLegend")
+          .append("text")
+            .attr("x", (d, i) => {
+              return ((legendWidth * i) + Math.floor(legendWidth / 2) - 2 + (width - legendWidth * colorVariance.length));
+            })
+            .attr("y", mapHeight + height + 70)
+            .text( (d) => { return (Math.floor(d * 10) / 10); });
     },
     render: function render() {
       return(
@@ -416,11 +549,12 @@
       return { forceDirectedData: null };
     },
     componentDidMount: function componentDidMount() {
-      /* jQuery ajax call for Bar Data. Asynchronous, so we need to put the drawBarGraph
+      /* D3 ajax call for data. Asynchronous, so we need to put the drawGraph
       function inside the request callback */
-      this.serverRequest = $.get(this.props.forceURL, function(result) {
+      this.serverRequest = d3.json(this.props.forceURL, function(error, result) {
+        if(error) console.error("Error fetching force data!", error);
+
         this.setState({ forceDirectedData: result });
-        console.log(this.state.forceDirectedData);
         this.drawForceDirected();
       }.bind(this));
     },
@@ -445,12 +579,12 @@
       return { gobalMapData: null };
     },
     componentDidMount: function componentDidMount() {
-      /* jQuery ajax call for Bar Data. Asynchronous, so we need to put the drawBarGraph
+      /* D3 ajax call for data. Asynchronous, so we need to put the drawGraph
       function inside the request callback */
-      this.serverRequest = $.get(this.props.globalURL, function(result) {
-        this.setState({ globalMapData: JSON.parse(result) });
+      this.serverRequest = d3.json(this.props.globalURL, function(error, result) {
+        if(error) console.error("Error fetching global data!", error);
 
-        console.log(this.state.globalMapData);
+        this.setState({ globalMapData: result });
         this.drawGlobalMap();
       }.bind(this));
     },

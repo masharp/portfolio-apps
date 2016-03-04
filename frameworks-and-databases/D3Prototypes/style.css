@@ -47,6 +47,8 @@
     #main #content #graphs #bar-graph .year, #main #content #graphs #scatter-graph .year, #main #content #graphs #heat-graph .year, #main #content #graphs #force-graph .year, #main #content #graphs #global-graph .year {
       font-size: 0.8em;
       font-weight: normal; }
+    #main #content #graphs #bar-graph .heatLabel, #main #content #graphs #scatter-graph .heatLabel, #main #content #graphs #heat-graph .heatLabel, #main #content #graphs #force-graph .heatLabel, #main #content #graphs #global-graph .heatLabel {
+      font-size: 1.3em; }
 
 .footer {
   text-align: center;

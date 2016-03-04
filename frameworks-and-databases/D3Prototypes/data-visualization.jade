@@ -1,0 +1,32 @@
+doctype html
+
+html
+  head
+    meta(charset="utf-8")
+    meta(description content="D3 Data Visualization")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
+    
+    link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css")
+    
+    script(type="text/javascript", src="https://d3js.org/d3.v3.min.js", charset="utf-8")
+    script(type="text/javascript", src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.6/react.js")
+    script(type="text/javascript", src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.6/react-dom.js")
+    script(type="text/javascript", src="https://cdnjs.cloudflare.com/ajax/libs/react-bootstrap/0.28.1/react-bootstrap.min.js")
+    
+    link(rel="stylesheet", href="style.css")
+    
+    title= title
+    
+  body
+    #top.container
+      h1 Data Visualization Prototypes
+      h3 A collection of D3.js data visualization prototypes. Select from below:
+    #main.container
+    
+    p.footer
+      | Powered by D3 and React
+      br
+      | Created by #[a(href="http://www.softwareontheshore.com", target="_blank") Software on the Shore] for 
+      | #[a(href="http://www.freecodecamp.com", target="_blank") FreeCodeCamp].
+      
+    script(type="text/javascript", src="data-visualization.js")
