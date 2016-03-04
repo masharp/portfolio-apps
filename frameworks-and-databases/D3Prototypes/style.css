@@ -54,4 +54,12 @@
   text-align: center;
   margin: 1em; }
 
+.node {
+  stroke: #fff;
+  stroke-width: 1.5px; }
+
+.edge {
+  stroke: #999;
+  stroke-opacity: .6; }
+
 /*# sourceMappingURL=style.css.map */

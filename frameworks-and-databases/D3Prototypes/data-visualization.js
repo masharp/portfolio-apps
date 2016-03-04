@@ -6,6 +6,7 @@
       - http://bl.ocks.org/kiranml1/6872226
       - http://bl.ocks.org/d3noob/8952219
       - http://codepen.io/FreeCodeCamp/pen/adBBWd
+      - https://bl.ocks.org/mbostock/4062045
       - http://codepen.io/FreeCodeCamp/full/GoNNEy
       - http://codepen.io/FreeCodeCamp/full/rxWWGa
 
@@ -13,6 +14,7 @@
   Michael Sharp 2016 */
 
   /*jshint esnext: true */
+
 
 (function() {
   "use strict";
@@ -541,27 +543,105 @@
     }
   });
 
+  /* User Story: I can see a Force-directed Graph that shows which campers are posting links on Camper News to which domains.
+User Story: I can see each camper's icon on their node.
+User Story: I can see the relationship between the campers and the domains they're posting.
+User Story: I can tell approximately many times campers have linked to a specific domain from it's node size.
+User Story: I can tell approximately how many times a specific camper has posted a link from their node's size.*/
   const ForceDirected = React.createClass({ displayName: "ForceDirected",
     propTypes: {
       forceURL: React.PropTypes.string.isRequired
     },
     getInitialState: function getInitialState() {
-      return { forceDirectedData: null };
+      return { forceDirectedData: null, forceNodes: null, forceEdges: null };
     },
     componentDidMount: function componentDidMount() {
       /* D3 ajax call for data. Asynchronous, so we need to put the drawGraph
       function inside the request callback */
       this.serverRequest = d3.json(this.props.forceURL, function(error, result) {
         if(error) console.error("Error fetching force data!", error);
+        console.log(result);
 
-        this.setState({ forceDirectedData: result });
+        let edges = [{ source: 0, target: 1}];
+        let nodes = [{name: 0}, {name: 1}];
+
+        result.forEach( function(i) {
+
+        });
+
+        this.setState({ forceDirectedData: result, forceNodes: nodes, forceEdges: edges });
         this.drawForceDirected();
       }.bind(this));
     },
     drawForceDirected: function drawForceDirected() {
       /* Dynamically add title text and description */
-      d3.select("#force-graph").append("h3").text("Title");
-      d3.select("#force-graph").append("p").text("Sub Title");
+      d3.select("#force-graph").append("h3").text("FCC Camper News Network");
+      d3.select("#force-graph").append("p").text("Shows the relationship between campers and news domains on FreeCodeCamp.");
+      d3.select("#force-graph").append("p").text("Recent 100 posts.");
+      /* Set graph margins and dimensions*/
+      let width = 1100;
+      let height = 600;
+
+      /* define the mouseover tooltip elements */
+      let tooltip = d3.select(".tooltip");
+      let tooltipElement = d3.select("#force-graph").append("div")
+        .attr("class", "tooltip").style("opacity", 0);
+
+      /* draw the svg and graph size*/
+      let graph = d3.select("#force-graph").append("svg")
+      .attr("width", width)
+      .attr("height", height);
+
+      /* define the force directed layout */
+      let force = d3.layout.force()
+        .size([width, height])
+        .nodes(this.state.forceNodes)
+        .links(this.state.forceEdges)
+        .start();
+
+      /* draw the links first */
+      let edge = graph.selectAll(".edge")
+        .data(this.state.forceEdges)
+        .enter().append("line")
+        .attr("class", "edge");
+        //.style("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+      /* daw the nodes second */
+      let node = graph.selectAll(".node")
+        .data(this.state.forceNodes)
+        .enter().append("circle")
+        .attr("class", "node")
+        .attr("r", 5)
+        //.style("fill", function(d) { return color(d.group); })
+        //.call(force.drag)
+        //Mouse hover event on item for tooltip
+        .on("mouseover", function(d) {
+          let element = d3.select(this).attr("class", "mouseover");
+
+          tooltipElement.transition().duration(150)
+            .style("opacity", 0.9);
+
+          tooltipElement.html("<em class='name'>" + d.name + "</em>")
+            .style("left", (d3.event.pageX + 5) + "px")
+            .style("top", (d3.event.pageY - 50) + "px");
+        })
+        //Mouse ends hover event
+        .on("mouseout", function() {
+          let element = d3.select(this).attr("class", "mouseout");
+          tooltipElement.transition().duration(300)
+            .style("opacity", 0);
+        });
+
+    /* position the force nodes based on it's calculations */
+      force.on("tick", function() {
+        edge.attr("x1", function(d) { return d.source.x; })
+            .attr("y1", function(d) { return d.source.y; })
+            .attr("x2", function(d) { return d.target.x; })
+            .attr("y2", function(d) { return d.target.y; });
+
+        node.attr("cx", function(d) { return d.x; })
+            .attr("cy", function(d) { return d.y; });
+      });
 
     },
     render: function render() {
@@ -590,8 +670,26 @@
     },
     drawGlobalMap: function drawGlobalMap() {
       /* Dynamically add title text and description */
-      d3.select("#global-graph").append("h3").text("Title");
+      d3.select("#global-graph").append("h3").text("Global Meteorite Landings");
       d3.select("#global-graph").append("p").text("Sub Title");
+
+      /* Set graph margins and dimensions*/
+      let margin = { top: 20, right: 20, bottom: 20, left: 20 };
+      let width = 1100 - margin.left - margin.right;
+      let height = 600 - margin.top - margin.bottom;
+
+      /* define the mouseover tooltip elements */
+      let tooltip = d3.select(".tooltip");
+      let tooltipElement = d3.select("#global-graph").append("div")
+        .attr("class", "tooltip").style("opacity", 0);
+
+      /* draw the svg and graph*/
+      let graph = d3.select("#global-graph").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
     },
     render: function render() {
       return(
