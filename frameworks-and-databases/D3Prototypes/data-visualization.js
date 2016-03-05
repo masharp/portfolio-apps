@@ -543,11 +543,6 @@
     }
   });
 
-  /* User Story: I can see a Force-directed Graph that shows which campers are posting links on Camper News to which domains.
-    User Story: I can see each camper's icon on their node.
-    User Story: I can see the relationship between the campers and the domains they're posting.
-    User Story: I can tell approximately many times campers have linked to a specific domain from it's node size.
-    User Story: I can tell approximately how many times a specific camper has posted a link from their node's size.*/
   const ForceDirected = React.createClass({ displayName: "ForceDirected",
     propTypes: {
       forceURL: React.PropTypes.string.isRequired
@@ -561,16 +556,19 @@
       this.serverRequest = d3.json(this.props.forceURL, function(error, result) {
         if(error) console.error("Error fetching force data!", error);
 
+        let fccImg = "https://cdn.rawgit.com/Deftwun/e3756a8b518cbb354425/raw/6584db8babd6cbc4ecb35ed36f0d184a506b979e/free-code-camp-logo.svg";
+
         let edges = [];
-        let nodes = [{ type: "domain", full_domain: "www.freecodecamp.com", name: "freecodecamp", links: 0 }];
+        let nodes = [{ type: "domain", full_domain: "www.freecodecamp.com", name: "FCC Camper News", links: 0, icon: fccImg }];
+
 
         result.forEach( function(i) {
-          let newDomain = findDomain(i.link);
-          let domain = { type: "domain", full_domain: newDomain[0], name: newDomain[1], links: 1, color: "green" };
-          let author = { type: "author", name: i.author.username, icon: i.author.picture, color: "brown",
-                        links: 1, posts: [domain.name] };
-          let edgeA = { source: 0, target: null }; //all author nodes link to fcc node
-          let edgeD = { source: null, target: null };
+          let domain = { type: "domain", name: findDomain(i.link), links: 1, icon: fccImg, color: "green" };
+          let author = { type: "author", name: i.author.username, icon: ((i.author.picture) ? i.author.picture : fccIcon),
+                        color: "brown",links: 1, posts: [domain.name] };
+
+          let edgeA = { source: null, target: null };
+          let edgeD = { source: 0, target: null }; //all domain nodes link to fcc node
           let authorFound = false;
           let domainFound = false;
 
@@ -579,10 +577,9 @@
             for(let j = 0; j < nodes.length; j++) {
               if(nodes[j].name === author.name) {
                 nodes[j].links++;
-                nodes[j].posts.push(domain.name);
-                edgeD.source = j;
+                  if(nodes[j].posts) { nodes[j].posts.push(domain.name); }
                 authorFound = true;
-                break; //break this for loop
+                break; //break this loop
               }
             }
           } if(nodeFound(nodes, domain)) {
@@ -590,33 +587,36 @@
               if(nodes[k].name === domain.name) {
                 nodes[k].links++;
                 domainFound = true;
-                edgeD.target = k;
                 break; //break this loop
               }
             }
-
-          }
-          if(!authorFound) {
-            nodes.push(author);
-            edgeA.target = nodes.length - 1;
-            edges.push(edgeA);
-            nodes[0].links++;
           }
           if(!domainFound) {
             nodes.push(domain);
-            if(edgeD.target === null) { edgeD.target = nodes.length - 1; }
-            if(edgeD.source === null) { edgeD.source = 0; }
+            edgeD.target = nodes.length - 1;
             edges.push(edgeD);
+            nodes[0].links++;
+          }
+          if(!authorFound) {
+            nodes.push(author);
           }
           domainFound = false;
           authorFound = false;
+        });
+
+        nodes.forEach(function(node, i) {
+          if(node.type === "author") {
+            let uniquePosts = node.posts.filter((d, i) => { return i === node.posts.indexOf(d); });
+
+
+          }
         });
 
         this.setState({ forceDirectedData: result, forceNodes: nodes, forceEdges: edges });
         this.drawForceDirected();
       }.bind(this));
 
-      /* help function to check the node array for duplicates */
+      /* helper function to check the node array for duplicates */
       function nodeFound(nodes, item) {
         let found = false;
         for(let n = 0; n < nodes.length; n++) {
@@ -627,7 +627,6 @@
 
       /* helper function to extract the domain name without a regex */
       function findDomain(url) {
-        let result = [];
         let full = url.split("/")[2];
         let name = full.split(".");
 
@@ -646,9 +645,7 @@
         }
 
         if(name === undefined || name === "undefined") { name = "Name Unavailable."; }
-        result.push(full);
-        result.push(name);
-        return result;
+        return name;
       }
     },
     drawForceDirected: function drawForceDirected() {
@@ -673,7 +670,7 @@
       /* define the force directed layout */
       let force = d3.layout.force()
         .size([width, height])
-        .nodes(this.state.forceNodes)
+        .nodes(d3.values(this.state.forceNodes))
         .links(this.state.forceEdges)
         .linkDistance(100)
         .charge(-120)
@@ -684,14 +681,15 @@
         .data(this.state.forceEdges)
         .enter().append("line")
         .attr("class", "edge")
-        .style("stroke-width", function(d) { return (d.type === "domain") ? d.links : ""; });
+        .style("stroke-width", function(d) { return (d.type === "domain") ? d.links : ""; })
+        .style("stroke", "red");
 
       /* daw the nodes second */
       let node = graph.selectAll(".node")
-        .data(this.state.forceNodes)
+        .data(force.nodes())
         .enter().append("circle")
         .attr("class", "node")
-        .attr("r", (d) => { return (d.links > 5) ? d.links + 5 : 5 + d.links ; }) //default to 3 to be visually pleasing
+        .attr("r", (d) => { return (d.links > 5) ? (d.links + 5) / 1.5 : (5 + d.links) / 1.5 ; }) //default to be visually pleasing
         .style("fill", (d) => { return d.color; })
         .call(force.drag)
         //Mouse hover event on item for tooltip
@@ -700,7 +698,8 @@
           tooltipElement.transition().duration(150)
             .style("opacity", 0.9);
 
-          tooltipElement.html("<em class='name'>" + d.name + "</em><p>" + d.links + "</p>")
+          tooltipElement.html("<img class= 'forced-img' src='" + d.icon +"'/>" +
+            "<br><em class='name'>" + d.name + "</em><p>" + d.links + "</p>")
             .style("left", (d3.event.pageX + 5) + "px")
             .style("top", (d3.event.pageY - 50) + "px");
         })
@@ -782,3 +781,30 @@
       document.getElementById("main"));
 
 }());
+
+/*   let edges = [];
+  let nodes = {};
+
+  result.forEach(function(d) {
+    let newsItem = {
+      "source": d.author.username,
+      "target": findDomain(d.link)[1],
+      "icon": d.author.picture,
+      "links": 0,
+      "color": ""
+    };
+
+    edges.push(newsItem);
+
+    edges.forEach(function(d) {
+      if(nodes[d.source]) { d.source = nodes[d.source]; }
+      else { d.source = (nodes[d.source] = { name: d.source, icon: d.icon }); }
+
+      if(nodes[d.target]) { d.target = nodes[d.target]; }
+      else { d.target = (nodes[d.target] = { name: d.target, links: 0 }); }
+    });
+
+    edges.forEach(function(d) {
+      nodes[d.target.name].links++;
+    });
+  }); */

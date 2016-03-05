@@ -49,6 +49,9 @@
       font-weight: normal; }
     #main #content #graphs #bar-graph .heatLabel, #main #content #graphs #scatter-graph .heatLabel, #main #content #graphs #heat-graph .heatLabel, #main #content #graphs #force-graph .heatLabel, #main #content #graphs #global-graph .heatLabel {
       font-size: 1.3em; }
+    #main #content #graphs #bar-graph .forced-img, #main #content #graphs #scatter-graph .forced-img, #main #content #graphs #heat-graph .forced-img, #main #content #graphs #force-graph .forced-img, #main #content #graphs #global-graph .forced-img {
+      height: auto;
+      width: 25px; }
 
 .footer {
   text-align: center;
