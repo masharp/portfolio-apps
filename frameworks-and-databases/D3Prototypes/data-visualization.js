@@ -544,10 +544,10 @@
   });
 
   /* User Story: I can see a Force-directed Graph that shows which campers are posting links on Camper News to which domains.
-User Story: I can see each camper's icon on their node.
-User Story: I can see the relationship between the campers and the domains they're posting.
-User Story: I can tell approximately many times campers have linked to a specific domain from it's node size.
-User Story: I can tell approximately how many times a specific camper has posted a link from their node's size.*/
+    User Story: I can see each camper's icon on their node.
+    User Story: I can see the relationship between the campers and the domains they're posting.
+    User Story: I can tell approximately many times campers have linked to a specific domain from it's node size.
+    User Story: I can tell approximately how many times a specific camper has posted a link from their node's size.*/
   const ForceDirected = React.createClass({ displayName: "ForceDirected",
     propTypes: {
       forceURL: React.PropTypes.string.isRequired
@@ -560,20 +560,85 @@ User Story: I can tell approximately how many times a specific camper has posted
       function inside the request callback */
       this.serverRequest = d3.json(this.props.forceURL, function(error, result) {
         if(error) console.error("Error fetching force data!", error);
-        console.log(result);
 
-        let edges = [{ source: 0, target: 1}];
-        let nodes = [{name: 0}, {name: 1}];
+        let edges = [];
+        let nodes = [{ full_domain: "www.freecodecamp.com", name: "freecodecamp", links: 2 }];
 
         result.forEach( function(i) {
+          let newDomain = findDomain(i.link);
+          let author = { name: i.author.username, icon: i.author.picture, color: "brown", links: 1 };
+          let domain = { full_domain: newDomain[0], name: newDomain[1], links: 1, color: "green" };
 
+          /* check if nodes contain author or domain already, uses helper function */
+          if(nodeFound(nodes, author)) {
+            for(let j = 0; j < nodes.length; j++) {
+              if(nodes[j].name === author.name) {
+                nodes[j].links++;
+                break; //break this for loop
+              }
+            }
+            return; //break the forEach loop
+          } if(nodeFound(nodes, domain)) {
+            for(let k = 0; k < nodes.length; k++) {
+              if(nodes[k].name === domain.name) {
+                nodes[k].links++;
+                break; //break this loop
+              }
+            }
+            return; //break the forEach loop
+          }
+          nodes.push(author);
+          nodes.push(domain);
         });
 
         this.setState({ forceDirectedData: result, forceNodes: nodes, forceEdges: edges });
         this.drawForceDirected();
       }.bind(this));
+
+      /* help function to check the node array for duplicates */
+      function nodeFound(nodes, item) {
+        let found = false;
+        for(let n = 0; n < nodes.length; n++) {
+          if(nodes[n].name === item.name) { found = true; break; }
+        }
+        return found;
+      }
+
+      /* helper function to extract the domain name without a regex */
+      function findDomain(url) {
+        let result = [];
+        let full = url.split("/")[2];
+        let name = full.split(".");
+
+        /* check edge cases like subdomains or domain masking like (t.co for twitter)
+        if edge cases become too complicated, may need a better solution */
+        if(name[0] === "www") { //most urls
+          name = name[1];
+        } else if (name[0] === "medium") { //medium subdomain
+          name = "medium";
+        } else if (name[0] === "t") { //twitter masking
+          name = "twitter";
+        } else if (name[0] !== "www" && name.length > 2) { //most other subdomains
+          name = name[1];
+        } else {
+          name = name[0]; //if there is no www or edge cases
+        }
+
+        if(name === undefined || name === "undefined") { name = "Name Unavailable."; }
+        console.log(name);
+        result.push(full);
+        result.push(name);
+        return result;
+      }
     },
     drawForceDirected: function drawForceDirected() {
+      console.log("-----------------");
+      this.state.forceNodes.forEach(function(i) {
+        console.log(i.name);
+      });
+      console.log(this.state.forceNodes);
+      console.log(this.state.forceEdges);
+
       /* Dynamically add title text and description */
       d3.select("#force-graph").append("h3").text("FCC Camper News Network");
       d3.select("#force-graph").append("p").text("Shows the relationship between campers and news domains on FreeCodeCamp.");
@@ -604,16 +669,16 @@ User Story: I can tell approximately how many times a specific camper has posted
         .data(this.state.forceEdges)
         .enter().append("line")
         .attr("class", "edge");
-        //.style("stroke-width", function(d) { return Math.sqrt(d.value); });
+        //.style("stroke-width", function(d) { return d + 30; });
 
       /* daw the nodes second */
       let node = graph.selectAll(".node")
         .data(this.state.forceNodes)
         .enter().append("circle")
         .attr("class", "node")
-        .attr("r", 5)
-        //.style("fill", function(d) { return color(d.group); })
-        //.call(force.drag)
+        .attr("r", (d) => { return (d.links > 3) ? d.links : 3 + d.links  ; }) //default to 3 to be visually pleasing
+        .style("fill", (d) => { return d.color; })
+        .call(force.drag)
         //Mouse hover event on item for tooltip
         .on("mouseover", function(d) {
           let element = d3.select(this).attr("class", "mouseover");
@@ -621,7 +686,7 @@ User Story: I can tell approximately how many times a specific camper has posted
           tooltipElement.transition().duration(150)
             .style("opacity", 0.9);
 
-          tooltipElement.html("<em class='name'>" + d.name + "</em>")
+          tooltipElement.html("<em class='name'>" + d.name + "</em><p>" + d.links + "</p>")
             .style("left", (d3.event.pageX + 5) + "px")
             .style("top", (d3.event.pageY - 50) + "px");
         })
