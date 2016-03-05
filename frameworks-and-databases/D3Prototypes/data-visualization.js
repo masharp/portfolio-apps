@@ -562,33 +562,54 @@
         if(error) console.error("Error fetching force data!", error);
 
         let edges = [];
-        let nodes = [{ full_domain: "www.freecodecamp.com", name: "freecodecamp", links: 2 }];
+        let nodes = [{ type: "domain", full_domain: "www.freecodecamp.com", name: "freecodecamp", links: 0 }];
 
         result.forEach( function(i) {
           let newDomain = findDomain(i.link);
-          let author = { name: i.author.username, icon: i.author.picture, color: "brown", links: 1 };
-          let domain = { full_domain: newDomain[0], name: newDomain[1], links: 1, color: "green" };
+          let domain = { type: "domain", full_domain: newDomain[0], name: newDomain[1], links: 1, color: "green" };
+          let author = { type: "author", name: i.author.username, icon: i.author.picture, color: "brown",
+                        links: 1, posts: [domain.name] };
+          let edgeA = { source: 0, target: null }; //all author nodes link to fcc node
+          let edgeD = { source: null, target: null };
+          let authorFound = false;
+          let domainFound = false;
 
           /* check if nodes contain author or domain already, uses helper function */
           if(nodeFound(nodes, author)) {
             for(let j = 0; j < nodes.length; j++) {
               if(nodes[j].name === author.name) {
                 nodes[j].links++;
+                nodes[j].posts.push(domain.name);
+                edgeD.source = j;
+                authorFound = true;
                 break; //break this for loop
               }
             }
-            return; //break the forEach loop
           } if(nodeFound(nodes, domain)) {
             for(let k = 0; k < nodes.length; k++) {
               if(nodes[k].name === domain.name) {
                 nodes[k].links++;
+                domainFound = true;
+                edgeD.target = k;
                 break; //break this loop
               }
             }
-            return; //break the forEach loop
+
           }
-          nodes.push(author);
-          nodes.push(domain);
+          if(!authorFound) {
+            nodes.push(author);
+            edgeA.target = nodes.length - 1;
+            edges.push(edgeA);
+            nodes[0].links++;
+          }
+          if(!domainFound) {
+            nodes.push(domain);
+            if(edgeD.target === null) { edgeD.target = nodes.length - 1; }
+            if(edgeD.source === null) { edgeD.source = 0; }
+            edges.push(edgeD);
+          }
+          domainFound = false;
+          authorFound = false;
         });
 
         this.setState({ forceDirectedData: result, forceNodes: nodes, forceEdges: edges });
@@ -625,20 +646,12 @@
         }
 
         if(name === undefined || name === "undefined") { name = "Name Unavailable."; }
-        console.log(name);
         result.push(full);
         result.push(name);
         return result;
       }
     },
     drawForceDirected: function drawForceDirected() {
-      console.log("-----------------");
-      this.state.forceNodes.forEach(function(i) {
-        console.log(i.name);
-      });
-      console.log(this.state.forceNodes);
-      console.log(this.state.forceEdges);
-
       /* Dynamically add title text and description */
       d3.select("#force-graph").append("h3").text("FCC Camper News Network");
       d3.select("#force-graph").append("p").text("Shows the relationship between campers and news domains on FreeCodeCamp.");
@@ -662,27 +675,28 @@
         .size([width, height])
         .nodes(this.state.forceNodes)
         .links(this.state.forceEdges)
+        .linkDistance(100)
+        .charge(-120)
         .start();
 
       /* draw the links first */
       let edge = graph.selectAll(".edge")
         .data(this.state.forceEdges)
         .enter().append("line")
-        .attr("class", "edge");
-        //.style("stroke-width", function(d) { return d + 30; });
+        .attr("class", "edge")
+        .style("stroke-width", function(d) { return (d.type === "domain") ? d.links : ""; });
 
       /* daw the nodes second */
       let node = graph.selectAll(".node")
         .data(this.state.forceNodes)
         .enter().append("circle")
         .attr("class", "node")
-        .attr("r", (d) => { return (d.links > 3) ? d.links : 3 + d.links  ; }) //default to 3 to be visually pleasing
+        .attr("r", (d) => { return (d.links > 5) ? d.links + 5 : 5 + d.links ; }) //default to 3 to be visually pleasing
         .style("fill", (d) => { return d.color; })
         .call(force.drag)
         //Mouse hover event on item for tooltip
         .on("mouseover", function(d) {
           let element = d3.select(this).attr("class", "mouseover");
-
           tooltipElement.transition().duration(150)
             .style("opacity", 0.9);
 
