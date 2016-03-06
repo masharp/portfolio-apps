@@ -2,20 +2,10 @@
   This is a collection of various D3 data visualizations using different statistical
   data. A FreeCodeCamp directed project.
 
-  References:
-      - http://bl.ocks.org/kiranml1/6872226
-      - http://bl.ocks.org/d3noob/8952219
-      - http://codepen.io/FreeCodeCamp/pen/adBBWd
-      - https://bl.ocks.org/mbostock/4062045
-      - http://codepen.io/FreeCodeCamp/full/GoNNEy
-      - http://codepen.io/FreeCodeCamp/full/rxWWGa
-
   www.softwareontheshore.com
   Michael Sharp 2016 */
 
   /*jshint esnext: true */
-
-
 (function() {
   "use strict";
 
@@ -94,7 +84,12 @@
       );
     }
   });
-
+  /* --------------------------------------------------------------------------------
+    A D3 bar chart that shows the relationship between
+    References : ["http://codepen.io/FreeCodeCamp/pen/adBBWd",
+                  "http://bl.ocks.org/d3noob/8952219",
+                  "http://bl.ocks.org/kiranml1/6872226"]
+   ----------------------------------------------------------------------------------*/
   const Bar = React.createClass({ displayName: "Bar",
     propTypes: {
       barURL: React.PropTypes.string.isRequired
@@ -215,6 +210,11 @@
     }
   });
 
+  /* --------------------------------------------------------------------------------
+    A D3 scatter-plot chart that shows the relationship between doping and fast race times
+    in professional bycicle racing.
+    References : ["http://codepen.io/FreeCodeCamp/full/GoNNEy"]
+   ----------------------------------------------------------------------------------*/
   const Scatterplot = React.createClass({ displayName: "Scatterplot",
     propTypes: {
       scatterURL: React.PropTypes.string.isRequired
@@ -369,6 +369,11 @@
     }
   });
 
+  /* --------------------------------------------------------------------------------
+    A relatively simple D3 Heat-Map chart that shows the global surface temperature
+    changes by month and year since it was first recorded. Color coded.
+    References : ["http://codepen.io/FreeCodeCamp/full/rxWWGa"]
+   ----------------------------------------------------------------------------------*/
   const HeatMap = React.createClass({ displayName: "HeatMap",
     propTypes: {
       heatURL: React.PropTypes.string.isRequired
@@ -543,86 +548,94 @@
     }
   });
 
+  /* --------------------------------------------------------------------------------
+    A relatively simple D3 Force-Directed Graph that shows the relationship between
+    a social news aggregator (FCC Camper News), recent users, and
+    their recent news domains (medium, twitter, etc).
+    References : ["https://bl.ocks.org/mbostock/4062045",
+                  "http://codepen.io/FreeCodeCamp/full/KVNNXY"]
+    TODO: There are a lot of for loop iterations due to array of objects data structure.
+          Seems to load alright even with the other graphs due to only 100 elements.
+          May need to refractor for efficiency.
+   ----------------------------------------------------------------------------------*/
   const ForceDirected = React.createClass({ displayName: "ForceDirected",
     propTypes: {
       forceURL: React.PropTypes.string.isRequired
     },
     getInitialState: function getInitialState() {
-      return { forceDirectedData: null, forceNodes: null, forceEdges: null };
+      return { forceNodes: null, forceEdges: null };
     },
     componentDidMount: function componentDidMount() {
-      /* D3 ajax call for data. Asynchronous, so we need to put the drawGraph
-      function inside the request callback */
+      /* D3 ajax call for data. The callback extracts the usable data from the
+        JSON and registers it to the react container state. */
       this.serverRequest = d3.json(this.props.forceURL, function(error, result) {
         if(error) console.error("Error fetching force data!", error);
 
         let fccImg = "https://cdn.rawgit.com/Deftwun/e3756a8b518cbb354425/raw/6584db8babd6cbc4ecb35ed36f0d184a506b979e/free-code-camp-logo.svg";
 
         let edges = [];
+        //Register FCC News aggregator as the first element to help with assigning node edges
         let nodes = [{ type: "domain", full_domain: "www.freecodecamp.com", name: "FCC Camper News", links: 0, icon: fccImg }];
 
-
+        /* extract the useful information from the resulting JSON */
         result.forEach( function(i) {
           let domain = { type: "domain", name: findDomain(i.link), links: 1, icon: fccImg, color: "green" };
           let author = { type: "author", name: i.author.username, icon: ((i.author.picture) ? i.author.picture : fccIcon),
                         color: "brown",links: 1, posts: [domain.name] };
-
-          let edgeA = { source: null, target: null };
           let edgeD = { source: 0, target: null }; //all domain nodes link to fcc node
-          let authorFound = false;
-          let domainFound = false;
 
           /* check if nodes contain author or domain already, uses helper function */
-          if(nodeFound(nodes, author)) {
+          if(findNode(nodes, author)) {
             for(let j = 0; j < nodes.length; j++) {
               if(nodes[j].name === author.name) {
                 nodes[j].links++;
                   if(nodes[j].posts) { nodes[j].posts.push(domain.name); }
-                authorFound = true;
                 break; //break this loop
               }
             }
-          } if(nodeFound(nodes, domain)) {
+          } else {
+            nodes.push(author);
+          }
+
+          if(findNode(nodes, domain)) {
             for(let k = 0; k < nodes.length; k++) {
               if(nodes[k].name === domain.name) {
                 nodes[k].links++;
-                domainFound = true;
                 break; //break this loop
               }
             }
-          }
-          if(!domainFound) {
+          } else {
             nodes.push(domain);
             edgeD.target = nodes.length - 1;
             edges.push(edgeD);
             nodes[0].links++;
           }
-          if(!authorFound) {
-            nodes.push(author);
-          }
-          domainFound = false;
-          authorFound = false;
         });
 
+        /* find the edges for each author's domain postings */
         nodes.forEach(function(node, i) {
           if(node.type === "author") {
             let uniquePosts = node.posts.filter((d, i) => { return i === node.posts.indexOf(d); });
 
-
+            uniquePosts.forEach(function(d) {
+              let postEdge = { source: findNode(nodes, d), target: i };
+              edges.push(postEdge);
+            });
           }
         });
 
-        this.setState({ forceDirectedData: result, forceNodes: nodes, forceEdges: edges });
+        /* register nodes and edges to the react state and then draw the graph */
+        this.setState({ forceNodes: nodes, forceEdges: edges });
         this.drawForceDirected();
       }.bind(this));
 
       /* helper function to check the node array for duplicates */
-      function nodeFound(nodes, item) {
-        let found = false;
+      function findNode(nodes, item) {
+        let target = item.name ? item.name : item;
         for(let n = 0; n < nodes.length; n++) {
-          if(nodes[n].name === item.name) { found = true; break; }
+          if(nodes[n].name === target) { return n; }
         }
-        return found;
+        return null;
       }
 
       /* helper function to extract the domain name without a regex */
@@ -673,7 +686,7 @@
         .nodes(d3.values(this.state.forceNodes))
         .links(this.state.forceEdges)
         .linkDistance(100)
-        .charge(-120)
+        .charge(-130)
         .start();
 
       /* draw the links first */
@@ -681,15 +694,14 @@
         .data(this.state.forceEdges)
         .enter().append("line")
         .attr("class", "edge")
-        .style("stroke-width", function(d) { return (d.type === "domain") ? d.links : ""; })
-        .style("stroke", "red");
+        .style("stroke-width", (d) => { return d.links * 5; });
 
       /* daw the nodes second */
       let node = graph.selectAll(".node")
         .data(force.nodes())
         .enter().append("circle")
         .attr("class", "node")
-        .attr("r", (d) => { return (d.links > 5) ? (d.links + 5) / 1.5 : (5 + d.links) / 1.5 ; }) //default to be visually pleasing
+        .attr("r", (d) => { return (d.links + 5) / 1.5; })
         .style("fill", (d) => { return d.color; })
         .call(force.drag)
         //Mouse hover event on item for tooltip
@@ -721,6 +733,42 @@
             .attr("cy", function(d) { return d.y; });
       });
 
+      /* Add the legend */
+      graph.selectAll(".legend")
+        .data(["fcc", "domain", "author"])
+        .enter().append("circle")
+        .attr("class", "legend")
+        .attr("r", 4)
+        .attr("cx", width - 200)
+        .attr("cy", (d, i) => { return (height - 100) + (i * 20); })
+        .attr("fill", (d) => {
+          switch(d) {
+            case "fcc":
+              return "black";
+            case "domain":
+              return "green";
+            case "author":
+              return "brown";
+          }
+        });
+
+        /* Add the legend text */
+        graph.selectAll(".legend-text")
+          .data(["fcc", "domain", "author"])
+          .enter().append("text")
+            .attr("class", "legend-text")
+            .attr("x", width - 175)
+            .attr("y", (d, i) => { return (height - 95) + (i * 20); })
+            .text( (d) => {
+              switch(d) {
+                case "fcc":
+                  return "FCC Camper News";
+                case "domain":
+                  return "News or Social Domain";
+                case "author":
+                  return "Camper";
+              }
+             });
     },
     render: function render() {
       return(
@@ -729,6 +777,10 @@
     }
   });
 
+  /* --------------------------------------------------------------------------------
+    A relatively simple D3 Global Map Visualization of meteorite impacts across the Earth.
+    References : ["http://codepen.io/FreeCodeCamp/full/mVEJag"]
+   ----------------------------------------------------------------------------------*/
   const GlobalMap = React.createClass({ displayName: "GlobalMap",
     propTypes: {
       globalURL: React.PropTypes.string.isRequired
@@ -781,30 +833,3 @@
       document.getElementById("main"));
 
 }());
-
-/*   let edges = [];
-  let nodes = {};
-
-  result.forEach(function(d) {
-    let newsItem = {
-      "source": d.author.username,
-      "target": findDomain(d.link)[1],
-      "icon": d.author.picture,
-      "links": 0,
-      "color": ""
-    };
-
-    edges.push(newsItem);
-
-    edges.forEach(function(d) {
-      if(nodes[d.source]) { d.source = nodes[d.source]; }
-      else { d.source = (nodes[d.source] = { name: d.source, icon: d.icon }); }
-
-      if(nodes[d.target]) { d.target = nodes[d.target]; }
-      else { d.target = (nodes[d.target] = { name: d.target, links: 0 }); }
-    });
-
-    edges.forEach(function(d) {
-      nodes[d.target.name].links++;
-    });
-  }); */
