@@ -430,7 +430,7 @@
 
       /* Find the dimensions of the heat map */
       let mapWidth = width / recordedYears.length;
-      let mapHeight = height / months.length - .5;
+      let mapHeight = height / months.length - 0.5;
 
       /* Draw the color variance legend */
       let varianceScale = d3.scale.quantile()
@@ -779,47 +779,129 @@
 
   /* --------------------------------------------------------------------------------
     A relatively simple D3 Global Map Visualization of meteorite impacts across the Earth.
-    References : ["http://codepen.io/FreeCodeCamp/full/mVEJag"]
+    Uses the D3 topojson package to handle GeoJSON data.
+    References : ["http://codepen.io/FreeCodeCamp/full/mVEJag",
+                  "http://bl.ocks.org/mbostock/3757132",
+                    "https://bost.ocks.org/mike/map/"]
+
+    TODO: Perhaps add a zoom / resize functionality
    ----------------------------------------------------------------------------------*/
   const GlobalMap = React.createClass({ displayName: "GlobalMap",
     propTypes: {
       globalURL: React.PropTypes.string.isRequired
     },
     getInitialState: function getInitialState() {
-      return { gobalMapData: null };
+      return { gobalMapNeo: null, globalMapData: null };
     },
     componentDidMount: function componentDidMount() {
-      /* D3 ajax call for data. Asynchronous, so we need to put the drawGraph
-      function inside the request callback */
-      this.serverRequest = d3.json(this.props.globalURL, function(error, result) {
-        if(error) console.error("Error fetching global data!", error);
+      /* self-executing promise so that we can update the react component state
+        d3 calls are mode, then call the graph drawing function */
+      let self = this;
 
-        this.setState({ globalMapData: result });
-        this.drawGlobalMap();
-      }.bind(this));
+      (function() {
+        return new Promise(function(resolve, reject) {
+          d3.json(self.props.globalURL, function(error, neo) {
+            if(error) console.error("Error fetching global data!", error);
+            resolve(neo);
+          });
+        });
+      })().then(function(neo) {
+        d3.json("https://raw.githubusercontent.com/mbostock/topojson/master/examples/world-50m.json", function(error, map) {
+          if(error) console.error("Error fetching global map data!", error);
+          self.setState({ globalMapData: map, globalMapNeo: neo });
+          self.drawGlobalMap();
+        });
+      });
     },
     drawGlobalMap: function drawGlobalMap() {
       /* Dynamically add title text and description */
       d3.select("#global-graph").append("h3").text("Global Meteorite Landings");
-      d3.select("#global-graph").append("p").text("Sub Title");
+      d3.select("#global-graph").append("p").text("Data collected by NASA programs");
 
       /* Set graph margins and dimensions*/
-      let margin = { top: 20, right: 20, bottom: 20, left: 20 };
-      let width = 1100 - margin.left - margin.right;
-      let height = 600 - margin.top - margin.bottom;
+      let width = 1100;
+      let height = 600;
 
       /* define the mouseover tooltip elements */
       let tooltip = d3.select(".tooltip");
       let tooltipElement = d3.select("#global-graph").append("div")
         .attr("class", "tooltip").style("opacity", 0);
 
+      /* draw the map projection */
+      let projection = d3.geo.mercator()
+        .scale((width + 1) / 2 / Math.PI)
+        .translate([width / 2, height / 2])
+        .precision(0.1);
+
+      let path = d3.geo.path()
+        .projection(projection);
+
+      let graticule = d3.geo.graticule();
+
       /* draw the svg and graph*/
       let graph = d3.select("#global-graph").append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr("width", width)
+        .attr("height", height);
 
+      graph.append("path")
+        .datum(graticule)
+        .attr("class", "graticule")
+        .attr("d", path);
+
+      /* draw the map based on geo data stored in the react component state */
+      graph.insert("path", ".graticule")
+        .datum(topojson.feature(this.state.globalMapData, this.state.globalMapData.objects.land))
+        .attr("class", "land")
+        .attr("d", path);
+
+      graph.insert("path", ".graticule")
+        .datum(topojson.mesh(this.state.globalMapData,
+            this.state.globalMapData.objects.countries, (a, b) => { return a !== b; }))
+        .attr("class", "boundary")
+        .attr("d", path);
+
+      /* Draw the meteroite strikes on the map */
+      graph.append("g").selectAll("path")
+        .data(this.state.globalMapNeo.features)
+        .enter().append("circle")
+          .attr("cx", (d) => { return projection([ d.properties.reclong, d.properties.reclat])[0]; })
+          .attr("cy", (d) => { return projection([ d.properties.reclong, d.properties.reclat])[1]; })
+          .attr("r", (d) => {
+            let masses = 700000/4;
+            let mass = d.properties.mass;
+
+            if(mass <= masses) { return 3; }
+            else if(mass <= masses * 2) { return 12; }
+            else if(mass <= masses * 3) { return 24; }
+            else if(masses <= masses * 20) { return 36; }
+            else if(masses <= masses * 75) { return 48; }
+            else return 55;
+          })
+          .attr("fill-opacity", (d) => { return 0.5; })
+          .attr("stroke-width", 1)
+          .attr("stroke", "red")
+          .attr("fill", "white")
+          //Mouse hover event on item for tooltip
+          .on("mouseover", function(d) {
+            let element = d3.select(this).attr("class", "mouseover");
+            tooltipElement.transition().duration(150)
+              .style("opacity", 0.9);
+
+            tooltipElement.html(
+              "<em>Name: " + d.properties.name + "</em>" +
+              "<p>Year: " + d.properties.year.split("-")[0] + "</p>" +
+              "<p>Mass (kg): " + d.properties.mass + "</p>" +
+              "<p>Classification: " + d.properties.recclass + "</p>" +
+              "<p>Outcome: " + d.properties.fall + "</p>")
+              .style("left", (d3.event.pageX + 5) + "px")
+              .style("top", (d3.event.pageY - 50) + "px");
+          })
+          //Mouse ends hover event
+          .on("mouseout", function() {
+            let element = d3.select(this).attr("class", "mouseout");
+            tooltipElement.transition().duration(300)
+              .style("opacity", 0);
+          });
     },
     render: function render() {
       return(
