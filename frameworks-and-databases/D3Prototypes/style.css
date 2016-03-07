@@ -1,17 +1,48 @@
+body, html {
+  background-color: #0089c4;
+  color: white; }
+  @media (max-width: 650px) {
+    body, html {
+      font-size: 10px; } }
+
 #top {
   width: 100%;
   text-align: center;
   margin: .5em; }
+  @media (max-width: 650px) {
+    #top h1 {
+      font-size: 2.2em; }
+    #top h3 {
+      font-size: 1.7em; } }
 
+#main #content .hidden {
+  display: none; }
+#main #content #home-grid {
+  text-align: center;
+  margin: .5em; }
+  #main #content #home-grid img {
+    height: auto;
+    width: 20em;
+    border-radius: .5;
+    margin: 1em;
+    box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.32), 0 3px 12px 0 rgba(0, 0, 0, 0.24); }
+    #main #content #home-grid img:hover {
+      width: 21em;
+      margin: .5em;
+      box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.32), 0 3px 12px 0 white;
+      cursor: pointer; }
+    @media (max-width: 650px) {
+      #main #content #home-grid img {
+        width: 18em; } }
 #main #content #toolbar {
   width: 100%;
-  text-align: center; }
+  text-align: center;
+  margin-bottom: 1em; }
   #main #content #toolbar #buttons {
     display: inline-block; }
 #main #content #graphs {
-  text-align: center; }
-  #main #content #graphs .hidden {
-    display: none; }
+  text-align: center;
+  color: #006591; }
   #main #content #graphs .graph {
     margin: .5em; }
   #main #content #graphs #scatter-graph text {
@@ -49,6 +80,9 @@
       font-weight: normal; }
     #main #content #graphs #bar-graph .heatLabel, #main #content #graphs #scatter-graph .heatLabel, #main #content #graphs #heat-graph .heatLabel, #main #content #graphs #force-graph .heatLabel, #main #content #graphs #global-graph .heatLabel {
       font-size: 1.3em; }
+    #main #content #graphs #bar-graph .heatLegend, #main #content #graphs #scatter-graph .heatLegend, #main #content #graphs #heat-graph .heatLegend, #main #content #graphs #force-graph .heatLegend, #main #content #graphs #global-graph .heatLegend {
+      font-size: .9em;
+      margin: 0 auto; }
     #main #content #graphs #bar-graph .forced-img, #main #content #graphs #scatter-graph .forced-img, #main #content #graphs #heat-graph .forced-img, #main #content #graphs #force-graph .forced-img, #main #content #graphs #global-graph .forced-img {
       height: auto;
       width: 25px; }

@@ -11,7 +11,6 @@
 
   /****************** React Bootstrap Components *******************/
   const Button = ReactBootstrap.Button;
-  const ButtonToolbar = ReactBootstrap.ButtonToolbar;
 
   /* Graph Data API Calls */
   const BAR_URL = "https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/GDP-data.json";
@@ -36,42 +35,44 @@
     /* Function that uses the document DOM object to query for all graphs and then
       manipulate the classes of each graph and show the selection while hiding the rest */
     showGraph: function showGraph(graph) {
-      let buttons = [].slice.call(document.getElementsByClassName("graph"));
-      let shownGraph = document.getElementById(graph + "-graph");
+      var graphs = [].slice.call(document.getElementsByClassName("graph"));
+      document.getElementById("home-grid").classList.add("hidden");
 
-      buttons.forEach(function(button) {
-        if(!button.classList.contains("hidden")) {
-          button.classList.add("hidden");
-        }
-        if(button.classList.contains("active")) {
-          button.classList.remove("active");
+      graphs.forEach(function(graph) {
+        if(!graph.classList.contains("hidden")) {
+          graph.classList.add("hidden");
         }
       });
 
-      shownGraph.classList.remove("hidden");
-      shownGraph.classList.add("active");
+      if(graph !== "home") {
+        document.getElementById(graph + "-graph").classList.remove("hidden");
+      } else {
+        document.getElementById("home-grid").classList.remove("hidden");
+      }
     },
     render: function render() {
       return (
         React.createElement("div", { id: "content", className: "container" },
           React.createElement("div", { id: "toolbar" },
-            React.createElement(ButtonToolbar, { id: "buttons" },
+            React.createElement(Button, { id: "bar-btn",
+              onClick: this.showGraph.bind(null, "home") }, "Home")
+          ),
+          React.createElement("hr", {}),
+          React.createElement("div", { id: "home-grid" },
+            React.createElement("img", { src: "/assets/apps/data-visualization/bar-chart.jpg",
+                className: "img-btn img-circle", onClick: this.showGraph.bind(null, "bar") }),
 
-              React.createElement(Button, { id: "bar-btn",
-                onClick: this.showGraph.bind(null, "bar"), bsStyle: "warning" }, "Bar Graph"),
+            React.createElement("img", { src: "/assets/apps/data-visualization/scatter-chart.jpg",
+                className: "img-btn img-circle", onClick: this.showGraph.bind(null, "scatter") }),
 
-              React.createElement(Button, { id: "scatter-btn",
-                onClick: this.showGraph.bind(null, "scatter"), bsStyle: "warning" }, "Scatterplot Graph"),
+            React.createElement("img", { src: "/assets/apps/data-visualization/heat-chart.jpg",
+                className: "img-btn img-circle", onClick: this.showGraph.bind(null, "heat") }),
 
-              React.createElement(Button, { id: "heat-btn",
-                onClick: this.showGraph.bind(null, "heat"), bsStyle: "warning" }, "Heat Map"),
+            React.createElement("img", { src: "/assets/apps/data-visualization/force-chart.jpg",
+                className: "img-btn img-circle", onClick: this.showGraph.bind(null, "force") }),
 
-              React.createElement(Button, { id: "force-btn",
-                onClick: this.showGraph.bind(null, "force"), bsStyle: "warning" }, "Force Directed Graph"),
-
-              React.createElement(Button, { id: "global-btn",
-                onClick: this.showGraph.bind(null, "global"), bsStyle: "warning" }, "Global Data Map")
-            )
+            React.createElement("img", { src: "/assets/apps/data-visualization/global-chart.jpg",
+                className: "img-btn img-circle", onClick: this.showGraph.bind(null, "global") })
           ),
           React.createElement("div", { id: "graphs" },
             React.createElement(Bar, { barURL: this.props.barURL }),
@@ -178,7 +179,7 @@
           .attr("x", (d) => { return x(new Date(d[0])); })
           .attr("y", (d) => { return y(d[1]); })
           .attr("height", (d) => { return height - y(d[1]); })
-          .attr("width", barWidth - .5)
+          .attr("width", barWidth - 0.5)
 
           //Mouse hover event on each bar for tooltip
           .on("mouseover", function(d) {
@@ -205,7 +206,7 @@
     },
     render: function render() {
       return(
-        React.createElement("div", { id: "bar-graph", className: "graph active"})
+        React.createElement("div", { id: "bar-graph", className: "graph hidden"})
       );
     }
   });
@@ -520,26 +521,26 @@
 
         /* Draw the legend by plotting it on the graph and then coloring the blocks
           with an array loop */
-        let legendWidth = 40;
-        graph.selectAll(".heatLegend")
-          .data([0].concat(varianceScale.quantiles()), (d) => { return d; })
-          .enter().append("g")
-            .attr("class", "heatLegend")
-            .append("rect")
-              .attr("x", (d, i) => { return legendWidth * i + (50 * colorVariance.length); })
-              .attr("y", height + 70)
-              .attr("width", legendWidth)
-              .attr("height", mapHeight / 2)
-              .style("fill", (d, i) => { return colorVariance[i]; });
+          let legendWidth = 40;
+          graph.selectAll(".heatLegend")
+            .data([0].concat(varianceScale.quantiles()), (d) => { return d; })
+            .enter().append("g")
+              .attr("class", "heatLegend")
+              .append("rect")
+                .attr("x", (d, i) => { return legendWidth * i + (40 * colorVariance.length); })
+                .attr("y", height + 70)
+                .attr("width", legendWidth)
+                .attr("height", mapHeight / 2)
+                .style("fill", (d, i) =>  { return colorVariance[i]; });
 
-        /* Draw the text for the legend and then place it below the legend grid */
-        graph.selectAll(".heatLegend")
-          .append("text")
-            .attr("x", (d, i) => {
-              return ((legendWidth * i) + Math.floor(legendWidth / 2) - 2 + (width - legendWidth * colorVariance.length));
-            })
-            .attr("y", mapHeight + height + 70)
-            .text( (d) => { return (Math.floor(d * 10) / 10); });
+          /* Draw the text for the legend and then place it below the legend grid */
+          graph.selectAll(".heatLegend")
+            .append("text")
+              .attr("x", (d, i) =>  {
+                return (((legendWidth - 2) * i) + Math.floor(legendWidth / 2) - 100 + (width - legendWidth * colorVariance.length));
+              })
+              .attr("y", mapHeight + height + 70)
+              .text( (d) => { return (Math.floor(d * 10) / 10); });
     },
     render: function render() {
       return(

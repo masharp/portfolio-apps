@@ -1,13 +1,64 @@
+body, html {
+  background-color: lighten(#006591, 10);
+  color: white;
+
+  @media (max-width: 650px) {
+    font-size: 10px;
+  }
+  @media (min-width: 650px) and (max-width: 900px) {
+  }
+}
+
 #top {
   width: 100%;
   text-align: center;
   margin: .5em;
+
+  @media (max-width: 650px) {
+    h1 {
+      font-size: 2.2em;
+    }
+    h3 {
+      font-size: 1.7em;
+    }
+  }
+  @media (min-width: 650px) and (max-width: 900px) {
+  }
 }
 #main {
   #content {
+    .hidden {
+      display: none;
+    }
+    #home-grid {
+      text-align: center;
+      margin: .5em;
+
+      img {
+        height: auto;
+        width: 20em;
+        border-radius: .5;
+        margin: 1em;
+        box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.32), 0 3px 12px 0 rgba(0, 0, 0, 0.24);
+
+        &:hover {
+          width: 21em;
+          margin: .5em;
+          box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.32), 0 3px 12px 0 white;
+          cursor: pointer;
+        }
+
+        @media (max-width: 650px) {
+          width: 18em;
+        }
+        @media (min-width: 650px) and (max-width: 900px) {
+        }
+      }
+    }
     #toolbar {
       width: 100%;
       text-align: center;
+      margin-bottom: 1em;
 
       #buttons {
         display: inline-block;
@@ -15,10 +66,8 @@
     }
     #graphs {
       text-align: center;
+      color: #006591;
 
-      .hidden {
-        display: none;
-      }
       .graph {
         margin: .5em;
       }
@@ -30,7 +79,6 @@
         background-color: white;
         padding: 1em;
         box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.32), 0 3px 12px 0 rgba(0, 0, 0, 0.24);
-
 
         p {
           margin: .1em;
@@ -69,6 +117,10 @@
         }
         .heatLabel {
           font-size: 1.3em;
+        }
+        .heatLegend {
+          font-size: .9em;
+          margin: 0 auto;
         }
         .forced-img {
           height: auto;
